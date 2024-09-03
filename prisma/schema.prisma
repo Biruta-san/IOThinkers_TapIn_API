@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model TipoIntegracao {
+  TPIT_ID                Int                      @id @default(autoincrement()) @db.TinyInt
+  TPIT_Nome              String                   @db.VarChar(50)
+  HotelIntegracaoArquivo HotelIntegracaoArquivo[]
+}
+
+model Pais {
+  PAIS_ID              Int      @id @default(autoincrement()) @db.TinyInt
+  PAIS_SufixoTelefonia Int      @db.SmallInt
+  PAIS_Nome            String   @db.VarChar(125)
+  PAIS_Sigla           String   @db.Char(5)
+  Estados              Estado[]
+}
+
+model Estado {
+  ESTD_ID    Int      @id @default(autoincrement()) @db.TinyInt
+  ESTD_Nome  String   @db.VarChar(125)
+  ESTD_Sigla String   @db.Char(5)
+  PAIS_ID    Int      @db.TinyInt
+  Pais       Pais     @relation(fields: [PAIS_ID], references: [PAIS_ID])
+  Cidades    Cidade[]
+}
+
+model Cidade {
+  CIDA_ID   Int             @id @default(autoincrement()) @db.Int
+  CIDA_Nome String          @db.VarChar(125)
+  ESTD_ID   Int             @db.TinyInt
+  Estado    Estado          @relation(fields: [ESTD_ID], references: [ESTD_ID])
+  Hoteis    HotelEndereco[]
+}
+
+model Usuario {
+  USUA_ID                Int                      @id @default(autoincrement()) @db.Int
+  USUA_Nome              String                   @db.VarChar(125)
+  HOTL_ID                Int?                     @db.Int
+  Hoteis                 Hotel?                   @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  UsuarioHotelPontuacao  UsuarioHotelPontuacao[]
+  HotelQuartoAgendamento HotelQuartoAgendamento[]
+}
+
+model Hotel {
+  HOTL_ID                      Int                      @id @default(autoincrement()) @db.Int
+  HOTL_Nome                    String                   @db.VarChar(125)
+  HOTL_IdentificacaoTributaria String                   @db.VarChar(20)
+  HOTL_AcumulaPontuacao        Boolean
+  HOTL_ConversaoPontos         Decimal?                 @db.Decimal(12, 2)
+  Usuarios                     Usuario[]
+  HotelEnderecos               HotelEndereco[]
+  UsuarioHotelPontuacao        UsuarioHotelPontuacao[]
+  HotelQuarto                  HotelQuarto[]
+  HotelImagem                  HotelImagem[]
+  HotelIntegracaoArquivo       HotelIntegracaoArquivo[]
+}
+
+model HotelIntegracaoArquivo {
+  HOIA_ID        Int            @id @default(autoincrement()) @db.TinyInt
+  HOTL_ID        Int            @db.Int
+  Hotel          Hotel          @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  TPIT_ID        Int            @db.TinyInt
+  TipoIntegracao TipoIntegracao @relation(fields: [TPIT_ID], references: [TPIT_ID])
+  HOIA_Diretorio String         @db.VarChar(255)
+}
+
+model HotelImagem {
+  HOIM_ID          Int     @id @default(autoincrement()) @db.Int
+  HOTL_ID          Int     @db.Int
+  Hotel            Hotel   @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  HOIM_NomeArquivo String  @db.VarChar(125)
+  HOIM_GUIDArquivo String? @db.VarChar(255)
+  HOIM_Base64      String? @db.MediumText
+}
+
+model HotelEndereco {
+  HOEN_ID     Int    @id @default(autoincrement()) @db.Int
+  HOTL_ID     Int    @db.Int
+  Hotel       Hotel  @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  HOEN_Numero Int    @db.Int
+  HOEN_Bairro String @db.VarChar(125)
+  CIDA_ID     Int    @db.Int
+  Cidade      Cidade @relation(fields: [CIDA_ID], references: [CIDA_ID])
+}
+
+model HotelQuarto {
+  HOQT_ID                 Int                      @id @default(autoincrement()) @db.Int
+  HOTL_ID                 Int                      @db.Int
+  Hotel                   Hotel                    @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  HOQT_Numero             Int                      @db.Int
+  HOQT_ValorDiaria        Decimal                  @db.Decimal(12, 2)
+  HOQT_Ativo              Boolean
+  HotelQuartoImagens      HotelQuartoImagem[]
+  HotelQuartoAgendamentos HotelQuartoAgendamento[]
+}
+
+model HotelQuartoImagem {
+  HOQI_ID          Int         @id @default(autoincrement()) @db.Int
+  HOQT_ID          Int         @db.Int
+  HotelQuarto      HotelQuarto @relation(fields: [HOQT_ID], references: [HOQT_ID])
+  HOQI_NomeArquivo String      @db.VarChar(125)
+  HOQI_GUIDArquivo String?     @db.VarChar(255)
+  HOQI_Base64      String?     @db.MediumText
+}
+
+model HotelQuartoAgendamento {
+  HOQA_ID       Int         @id @default(autoincrement()) @db.Int
+  HOQA_CheckIn  DateTime
+  HOQA_CheckOut DateTime
+  HOQT_ID       Int         @db.Int
+  HotelQuarto   HotelQuarto @relation(fields: [HOQT_ID], references: [HOQT_ID])
+  USUA_ID       Int         @db.Int
+  Usuario       Usuario     @relation(fields: [USUA_ID], references: [USUA_ID])
+}
+
+model UsuarioHotelPontuacao {
+  USUA_ID        Int     @db.Int
+  Usuario        Usuario @relation(fields: [USUA_ID], references: [USUA_ID])
+  HOTL_ID        Int     @db.Int
+  Hotel          Hotel   @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  USHP_Pontuacao Int     @db.Int
+
+  @@id([USUA_ID, HOTL_ID])
+}
