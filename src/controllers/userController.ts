@@ -15,6 +15,8 @@ import { atualizarUsuario, consultarUsuario, inserirUsuario, listaUsuario, logUs
  *     summary: Retorna uma lista de usuários
  *     tags: 
  *       - Usuário
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Uma lista de usuários
@@ -54,6 +56,8 @@ export async function getListaUsuario(req: Request, res: Response) {
  *     summary: Retorna um usuário pelo ID
  *     tags: 
  *       - Usuário
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -100,6 +104,7 @@ export async function getUsuario(req: Request, res: Response) {
  *     summary: Realiza login na aplicação
  *     tags: 
  *       - Usuário
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -144,8 +149,9 @@ export async function getUsuario(req: Request, res: Response) {
  */
 export async function login(req: Request, res: Response) {
     try {
-        const usuario = await logUser({ email: req.body.email, senha: req.body.senha, hotelId: req.body.hotelId });
-        res.json(usuario);
+        const token = await logUser({ email: req.body.email, senha: req.body.senha, hotelId: req.body.hotelId });
+        if(!token) return res.status(404).json({ error: "Usuário não encontrado" });
+        res.json(token);
     } catch (error) {
         res.status(500).json({ error: "Erro ao realizar login" });
     }
@@ -158,6 +164,8 @@ export async function login(req: Request, res: Response) {
  *     summary: Insere um usuário e retorna o usuário inserido
  *     tags: 
  *       - Usuário
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -215,6 +223,8 @@ export async function postUsuario(req: Request, res: Response) {
  *     summary: Atualiza um usuário existente
  *     tags: 
  *       - Usuário
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

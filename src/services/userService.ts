@@ -1,6 +1,6 @@
 import { dbUsuario, getUsuario, loginUsuario, postUsuario } from "../models/userModels";
 import prisma from "../prismaClient";
-import { isNotNullOrEmpty } from "../utils/validate";
+import { generateToken, JwtPayload } from "../utils/token";
 
 export const listaUsuario = async () => {
     const usuarios: dbUsuario[] = await prisma.usuario.findMany();
@@ -80,5 +80,24 @@ export const atualizarUsuario = async (id: number, data: postUsuario) => {
 };
 
 export const logUser = async (data: loginUsuario) => {
-    return isNotNullOrEmpty(await prisma.usuario.findFirst({ where: { USUA_Email: data.email, USUA_Senha: data.senha, HOTL_ID: data.hotelId } }));
+    const user = await prisma.usuario.findFirst({
+        where: {
+            USUA_Email: data.email,
+            USUA_Senha: data.senha,
+            HOTL_ID: data.hotelId
+        }
+    });
+    if (!user) return null;
+
+    const token: JwtPayload = {
+        id: user.USUA_ID,
+        nome: user.USUA_Nome,
+        email: user.USUA_Email,
+        hotelId: user.HOTL_ID
+    };
+    const tokenValidated = generateToken(token);
+
+    if (!tokenValidated) return null;
+
+    return tokenValidated;
 };

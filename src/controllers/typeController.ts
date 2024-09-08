@@ -20,6 +20,8 @@ import {
  *     summary: Retorna uma lista de tipos de integração
  *     tags: 
  *       - TipoIntegracao
+ *     security:
+ *       - bearerAuth: [] 
  *     responses:
  *       200:
  *         description: Uma Lista de tipos de integração
@@ -51,6 +53,8 @@ export async function getListaTipoIntegracao(req: Request, res: Response) {
  *     summary: Retorna um tipo de integração pelo ID
  *     tags: 
  *       - TipoIntegracao
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - in: path
  *         name: id
@@ -89,6 +93,8 @@ export async function getTipoIntegracao(req: Request, res: Response) {
  *     summary: Insere um tipo de integração e retorna o tipo de integração inserido
  *     tags: 
  *       - TipoIntegracao
+ *     security:
+ *       - bearerAuth: [] 
  *     requestBody:
  *       required: true
  *       content:
@@ -129,6 +135,8 @@ export async function postTipoIntegracao(req: Request, res: Response) {
  *     summary: Atualiza um tipo de integração existente
  *     tags: 
  *       - TipoIntegracao
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - in: path
  *         name: id

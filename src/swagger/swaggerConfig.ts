@@ -10,6 +10,16 @@ const options = {
       version: '1.0.0',
       description: 'Documentação de API do IOThinkers TapIn',
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Insira o token JWT no formato: Bearer <token>',
+        },
+      },
+    },
     tags: [
       { name: 'TipoIntegracao', description: 'Endpoints relacionados a tipos de integração' },
       { name: 'Usuário', description: 'Endpoints relacionados a usuários' },
