@@ -10,8 +10,12 @@ const options = {
       version: '1.0.0',
       description: 'Documentação de API do IOThinkers TapIn',
     },
+    tags: [
+      { name: 'TipoIntegracao', description: 'Endpoints relacionados a tipos de integração' },
+      { name: 'Usuário', description: 'Endpoints relacionados a usuários' },
+    ],
   },
-  apis: ['./src/controllers/*.ts'], // Caminho para a documentação dos controllers
+  apis: ['./src/controllers/*.ts']
 };
 
 const swaggerSpec = swaggerJsdoc(options);

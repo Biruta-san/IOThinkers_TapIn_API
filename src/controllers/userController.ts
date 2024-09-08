@@ -1,14 +1,23 @@
-import { Request, Response } from 'express';
-import { getAllUsers, createUser } from '../services/userService';
+import { Request, Response } from "express";
+import { atualizarUsuario, consultarUsuario, inserirUsuario, listaUsuario, logUser } from "../services/userService";
 
 /**
  * @swagger
- * /api/users:
+ * tags:
+ *   - name: Usuário
+ *     description: Endpoints relacionados a usuários
+ */
+
+/**
+ * @swagger
+ * /usuario/lista:
  *   get:
- *     summary: Retrieve a list of users
+ *     summary: Retorna uma lista de usuários
+ *     tags: 
+ *       - Usuário
  *     responses:
  *       200:
- *         description: A list of users.
+ *         description: Uma lista de usuários
  *         content:
  *           application/json:
  *             schema:
@@ -18,42 +27,43 @@ import { getAllUsers, createUser } from '../services/userService';
  *                 properties:
  *                   id:
  *                     type: integer
- *                   name:
+ *                   nome:
  *                     type: string
  *                   email:
  *                     type: string
+ *                   hotelId:
+ *                     type: integer
+ *                     nullable: true
+ *                   hotelNome:
+ *                     type: string
+ *                     nullable: true
  */
-export async function getUsers(req: Request, res: Response) {
-  try {
-    const users = await getAllUsers();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: 'Error fetching users' });
-  }
+export async function getListaUsuario(req: Request, res: Response) {
+    try {
+        const usuario = await listaUsuario();
+        res.status(200).json(usuario);
+    } catch (error) {
+        res.status(500).json({ error });
+    }
 }
 
 /**
  * @swagger
- * /api/users:
- *   post:
- *     summary: Create a new user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
+ * /usuario/{id}:
+ *   get:
+ *     summary: Retorna um usuário pelo ID
+ *     tags: 
+ *       - Usuário
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário a ser consultado
+ *         schema:
+ *           type: integer
  *     responses:
- *       201:
- *         description: Created user.
+ *       200:
+ *         description: Um Usuário
  *         content:
  *           application/json:
  *             schema:
@@ -61,17 +71,210 @@ export async function getUsers(req: Request, res: Response) {
  *               properties:
  *                 id:
  *                   type: integer
- *                 name:
+ *                 nome:
  *                   type: string
  *                 email:
  *                   type: string
+ *                 hotelId:
+ *                   type: integer
+ *                   nullable: true
+ *                 hotelNome:
+ *                   type: string
+ *                   nullable: true
+ *       404:
+ *         description: Usuário não encontrado
  */
-export async function addUser(req: Request, res: Response) {
-  try {
-    const { name, email } = req.body;
-    const newUser = await createUser({ name, email });
-    res.status(201).json(newUser);
-  } catch (error) {
-    res.status(500).json({ error: 'Error creating user' });
-  }
+export async function getUsuario(req: Request, res: Response) {
+    try {
+        const usuario = await consultarUsuario(parseInt(req.params.id, 10));
+        res.json(usuario);
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao consultar usuário" });
+    }
+}
+
+/**
+ * @swagger
+ * /usuario/login:
+ *   post:
+ *     summary: Realiza login na aplicação
+ *     tags: 
+ *       - Usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - senha
+ *               - hotelId
+ *             properties:
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *               hotelId:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Um Usuário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 nome:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 hotelId:
+ *                   type: integer
+ *                   nullable: true
+ *                 hotelNome:
+ *                   type: string
+ *                   nullable: true
+ *       404:
+ *         description: Usuário não encontrado
+ *       500:
+ *         description: Erro ao realizar login
+ */
+export async function login(req: Request, res: Response) {
+    try {
+        const usuario = await logUser({ email: req.body.email, senha: req.body.senha, hotelId: req.body.hotelId });
+        res.json(usuario);
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao realizar login" });
+    }
+}
+
+/**
+ * @swagger
+ * /usuario:
+ *   post:
+ *     summary: Insere um usuário e retorna o usuário inserido
+ *     tags: 
+ *       - Usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nome
+ *               - email
+ *               - senha
+ *             properties:
+ *               nome:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *               hotelId:
+ *                 type: integer
+ *                 nullable: true
+ *     responses:
+ *       201:
+ *         description: Um usuário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 nome:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 hotelId:
+ *                   type: integer
+ *                   nullable: true
+ *                 hotelNome:
+ *                   type: string
+ *                   nullable: true
+ */
+export async function postUsuario(req: Request, res: Response) {
+    try {
+        const usuario = await inserirUsuario(req.body);
+        res.status(201).json(usuario);
+    } catch (error) {
+        res.status(500).json({ error: "Erro Inserindo usuário" });
+    }
+}
+
+/**
+ * @swagger
+ * /usuario/{id}:
+ *   put:
+ *     summary: Atualiza um usuário existente
+ *     tags: 
+ *       - Usuário
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário a ser atualizado
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nome
+ *               - email
+ *             properties:
+ *               nome:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *                 nullable: true
+ *               hotelId:
+ *                 type: integer
+ *                 nullable: true
+ *     responses:
+ *       200:
+ *         description: Usuário atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 nome:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 hotelId:
+ *                   type: integer
+ *                   nullable: true
+ *                 hotelNome:
+ *                   type: string
+ *                   nullable: true
+ *       400:
+ *         description: Requisição inválida
+ *       500:
+ *         description: Erro no servidor
+ */
+export async function putUsuario(req: Request, res: Response) {
+    try {
+        const usuario = await atualizarUsuario(
+            parseInt(req.params.id, 10),
+            req.body
+        );
+        res.status(200).json(usuario);
+    } catch (error) {
+        res.status(500).json({ error: "Erro atualizando usuário" });
+    }
 }

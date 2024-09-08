@@ -48,7 +48,9 @@ model Usuario {
   USUA_ID                Int                      @id @default(autoincrement()) @db.Int
   USUA_Nome              String                   @db.VarChar(125)
   HOTL_ID                Int?                     @db.Int
-  Hoteis                 Hotel?                   @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  USUA_Email             String                   @db.VarChar(125)
+  USUA_Senha             String                   @db.VarChar(255)
+  Hotel                  Hotel?                   @relation(fields: [HOTL_ID], references: [HOTL_ID])
   UsuarioHotelPontuacao  UsuarioHotelPontuacao[]
   HotelQuartoAgendamento HotelQuartoAgendamento[]
 }
@@ -68,12 +70,15 @@ model Hotel {
 }
 
 model HotelIntegracaoArquivo {
-  HOIA_ID        Int            @id @default(autoincrement()) @db.TinyInt
-  HOTL_ID        Int            @db.Int
-  Hotel          Hotel          @relation(fields: [HOTL_ID], references: [HOTL_ID])
-  TPIT_ID        Int            @db.TinyInt
-  TipoIntegracao TipoIntegracao @relation(fields: [TPIT_ID], references: [TPIT_ID])
-  HOIA_Diretorio String         @db.VarChar(255)
+  HOIA_ID                 Int            @id @default(autoincrement()) @db.TinyInt
+  HOTL_ID                 Int            @db.Int
+  Hotel                   Hotel          @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  TPIT_ID                 Int            @db.TinyInt
+  TipoIntegracao          TipoIntegracao @relation(fields: [TPIT_ID], references: [TPIT_ID])
+  HOIA_Diretorio          String         @db.VarChar(255)
+  HOIA_Credencial         String         @db.VarChar(255)
+  HOIA_Senha              String         @db.VarChar(255)
+  HOIA_EnderecoIntegracao String         @db.VarChar(255)
 }
 
 model HotelImagem {
@@ -82,7 +87,7 @@ model HotelImagem {
   Hotel            Hotel   @relation(fields: [HOTL_ID], references: [HOTL_ID])
   HOIM_NomeArquivo String  @db.VarChar(125)
   HOIM_GUIDArquivo String? @db.VarChar(255)
-  HOIM_Base64      String? @db.MediumText
+  HOIM_Base64      String? @db.LongText
 }
 
 model HotelEndereco {
@@ -112,7 +117,7 @@ model HotelQuartoImagem {
   HotelQuarto      HotelQuarto @relation(fields: [HOQT_ID], references: [HOQT_ID])
   HOQI_NomeArquivo String      @db.VarChar(125)
   HOQI_GUIDArquivo String?     @db.VarChar(255)
-  HOQI_Base64      String?     @db.MediumText
+  HOQI_Base64      String?     @db.LongText
 }
 
 model HotelQuartoAgendamento {

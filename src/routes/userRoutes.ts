@@ -1,16 +1,25 @@
-import { Router } from 'express';
-import { getUsers, addUser } from '../controllers/userController';
+import { Router } from "express";
+import { getListaUsuario, getUsuario, login, postUsuario, putUsuario } from "../controllers/userController";
 
 // Inicializando rotas de usuário
 const userRoutes = Router();
 
-// #region ROTAS
+// #region  ROTAS
 
-// Rota get para todos os usuários
-userRoutes.get('/', getUsers);
+// Rota para get de todos os usuários
+userRoutes.get('/lista', getListaUsuario);
 
-// Rota post para adicionar um usuário
-userRoutes.post('/', addUser);
+// Rota para get de usuário por id
+userRoutes.get('/:id', getUsuario);
+
+// Rota para post de usuário
+userRoutes.post('/', postUsuario);
+
+// Rota para put de usuário
+userRoutes.put('/:id', putUsuario);
+
+// Realiza login
+userRoutes.post('/login', login);
 
 // #endregion
 
