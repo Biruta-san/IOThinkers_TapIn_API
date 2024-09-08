@@ -251,7 +251,7 @@
     <column id="COL67" populated="true" UUID="66bf36d5-483d-49cc-aa1e-421f50d38d4d" autoIncrement="false" autoIncrementSequenceName="HotelIntegracaoArquivo_HOIA_Diretorio_seq" defaultValue="" name="HOIA_Diretorio" nullable="0" physicalName="HOIA_Diretorio" precision="255" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
-    <column id="COL68" populated="true" UUID="dc7b6a51-4f77-4ba2-a1fc-621790c8d201" autoIncrement="false" autoIncrementSequenceName="HotelIntegracaoArquivo_HOIA_Credencial_seq" defaultValue="" name="HOIA_Credencial" nullable="0" physicalName="HOIA_Credencial" precision="125" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+    <column id="COL68" populated="true" UUID="dc7b6a51-4f77-4ba2-a1fc-621790c8d201" autoIncrement="false" autoIncrementSequenceName="HotelIntegracaoArquivo_HOIA_Credencial_seq" defaultValue="" name="HOIA_Credencial" nullable="0" physicalName="HOIA_Credencial" precision="255" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
     <column id="COL69" populated="true" UUID="e0889cf6-7e43-4a9a-b029-e40ac991954e" autoIncrement="false" autoIncrementSequenceName="HotelIntegracaoArquivo_HOIA_Senha_seq" defaultValue="" name="HOIA_Senha" nullable="0" physicalName="HOIA_Senha" precision="255" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
@@ -421,7 +421,7 @@
  <ddl-generator type="ca.sqlpower.architect.ddl.GenericDDLGenerator" allow-connection="true"> </ddl-generator>
  <liquibase-settings useSeparateChangeSets="false" generateId="false" idStart="1"/>
  <create-kettle-job-settings filePath="" jobName="" schemaName="" kettleJoinType="0" savingToFile="true" />
- <play-pen zoom="1.0" viewportX="276" viewportY="153" relationship-style="rectilinear" names-displayLogicalNames="true" showPrimaryTag="true" showForeignTag="true" showAlternateTag="true" columnVisibility="ALL" relationshipLabelVisibility="true">
+ <play-pen zoom="1.0" viewportX="0" viewportY="0" relationship-style="rectilinear" names-displayLogicalNames="true" showPrimaryTag="true" showForeignTag="true" showAlternateTag="true" columnVisibility="ALL" relationshipLabelVisibility="true">
   <table-pane table-ref="TAB1" x="65" y="201" bgColor="0xbfd6ff" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB9" x="555" y="183" bgColor="0xbfd6ff" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB17" x="726" y="396" bgColor="0xbfd6ff" fgColor="0x000000" rounded="false" dashed="false"/>
