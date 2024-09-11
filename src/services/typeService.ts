@@ -19,8 +19,8 @@ export const consultarTipoIntegracao = async (id: number) => {
 
     if (!tipoIntegracao) return null;
 
-    const insertedTipoIntegracao: getTipoIntegracao = { id: tipoIntegracao.TPIT_ID, nome: tipoIntegracao.TPIT_Nome };
-    return insertedTipoIntegracao;
+    const selectedTipoIntegracao: getTipoIntegracao = { id: tipoIntegracao.TPIT_ID, nome: tipoIntegracao.TPIT_Nome };
+    return selectedTipoIntegracao;
 }
 
 export const inserirTipoIntegracao = async (data: postTipoIntegracao) => {

@@ -23,6 +23,7 @@ const options = {
     tags: [
       { name: 'TipoIntegracao', description: 'Endpoints relacionados a tipos de integração' },
       { name: 'Usuário', description: 'Endpoints relacionados a usuários' },
+      { name: 'Localização', description: 'Endpoints relacionados a localizações' },
     ],
   },
   apis: ['./src/controllers/*.ts']

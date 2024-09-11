@@ -32,6 +32,7 @@ export interface dbEstado {
     ESTD_Nome: string;
     ESTD_Sigla: string;
     PAIS_ID: number;
+    Pais: dbPais;
 }
 
 export interface getEstado {
@@ -39,6 +40,7 @@ export interface getEstado {
     nome: string;
     sigla: string;
     paisId: number;
+    paisNome: string;
 }
 
 export interface postEstado {
@@ -59,12 +61,16 @@ export interface dbCidade {
     CIDA_ID: number;
     CIDA_Nome: string;
     ESTD_ID: number;
+    Estado: dbEstado;
 }
 
 export interface getCidade {
     id: number;
     nome: string;
     estadoId: number;
+    estadoNome: string;
+    paisId: number;
+    paisNome: string;
 }
 
 export interface postCidade {
