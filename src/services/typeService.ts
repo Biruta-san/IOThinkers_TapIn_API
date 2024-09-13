@@ -1,41 +1,64 @@
-import { dbTipoIntegracao, getTipoIntegracao, postTipoIntegracao, putTipoIntegracao } from "../models/typeModels";
+import {
+  dbTipoIntegracao,
+  getTipoIntegracao,
+  postTipoIntegracao,
+  putTipoIntegracao,
+} from "../models/typeModels";
 import prisma from "../prismaClient";
 
-export const listaTipoIntegracao = async () => {
-    const tipoIntegracoes: dbTipoIntegracao[] = await prisma.tipoIntegracao.findMany();
-    const mappedTipoIntegracoes: getTipoIntegracao[] =
-        tipoIntegracoes.map(tpIntegracao => (
-            {
-                id: tpIntegracao.TPIT_ID,
-                nome: tpIntegracao.TPIT_Nome
-            }
-        ));
+const mapTipoIntegracao = (
+  tipoIntegracao: dbTipoIntegracao
+): getTipoIntegracao => ({
+  id: tipoIntegracao.TPIT_ID,
+  nome: tipoIntegracao.TPIT_Nome,
+});
 
-    return mappedTipoIntegracoes;
-}
+export const listaTipoIntegracao = async (): Promise<
+  getTipoIntegracao[] | null
+> => {
+  const tipoIntegracoes: dbTipoIntegracao[] =
+    await prisma.tipoIntegracao.findMany();
+  const mappedTipoIntegracoes: getTipoIntegracao[] = tipoIntegracoes.map(
+    (tipoIntegracao) => mapTipoIntegracao(tipoIntegracao)
+  );
 
-export const consultarTipoIntegracao = async (id: number) => {
-    const tipoIntegracao: dbTipoIntegracao | null = await prisma.tipoIntegracao.findFirst({ where: { TPIT_ID: id } });
+  return mappedTipoIntegracoes;
+};
 
-    if (!tipoIntegracao) return null;
+export const consultarTipoIntegracao = async (
+  id: number
+): Promise<getTipoIntegracao | null> => {
+  const tipoIntegracao: dbTipoIntegracao | null =
+    await prisma.tipoIntegracao.findFirst({ where: { TPIT_ID: id } });
 
-    const selectedTipoIntegracao: getTipoIntegracao = { id: tipoIntegracao.TPIT_ID, nome: tipoIntegracao.TPIT_Nome };
-    return selectedTipoIntegracao;
-}
+  if (!tipoIntegracao) return null;
 
-export const inserirTipoIntegracao = async (data: postTipoIntegracao) => {
-    const tipoIntegracao: dbTipoIntegracao = await prisma.tipoIntegracao.create({ data: { TPIT_Nome: data.nome } });
-    const insertedTipoIntegracao: getTipoIntegracao = { id: tipoIntegracao.TPIT_ID, nome: tipoIntegracao.TPIT_Nome };
-    return insertedTipoIntegracao;
-}
+  const selectedTipoIntegracao: getTipoIntegracao =
+    mapTipoIntegracao(tipoIntegracao);
+  return selectedTipoIntegracao;
+};
 
-export const atualizarTipoIntegracao = async (id: number, data: putTipoIntegracao) => {
-    const tipoIntegracao: dbTipoIntegracao =
-        await prisma.tipoIntegracao.update(
-            {
-                where: { TPIT_ID: id },
-                data: { TPIT_Nome: data.nome }
-            });
-    const updatedTipoIntegracao: getTipoIntegracao = { id: tipoIntegracao.TPIT_ID, nome: tipoIntegracao.TPIT_Nome };
-    return updatedTipoIntegracao;
-}
+export const inserirTipoIntegracao = async (
+  data: postTipoIntegracao
+): Promise<getTipoIntegracao> => {
+  const tipoIntegracao: dbTipoIntegracao = await prisma.tipoIntegracao.create({
+    data: { TPIT_Nome: data.nome },
+  });
+  const insertedTipoIntegracao: getTipoIntegracao =
+    mapTipoIntegracao(tipoIntegracao);
+
+  return insertedTipoIntegracao;
+};
+
+export const atualizarTipoIntegracao = async (
+  id: number,
+  data: putTipoIntegracao
+): Promise<getTipoIntegracao> => {
+  const tipoIntegracao: dbTipoIntegracao = await prisma.tipoIntegracao.update({
+    where: { TPIT_ID: id },
+    data: { TPIT_Nome: data.nome },
+  });
+  const updatedTipoIntegracao: getTipoIntegracao =
+    mapTipoIntegracao(tipoIntegracao);
+  return updatedTipoIntegracao;
+};

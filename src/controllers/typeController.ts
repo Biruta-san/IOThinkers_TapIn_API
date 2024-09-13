@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import {
-    atualizarTipoIntegracao,
-    consultarTipoIntegracao,
-    inserirTipoIntegracao,
-    listaTipoIntegracao,
+  atualizarTipoIntegracao,
+  consultarTipoIntegracao,
+  inserirTipoIntegracao,
+  listaTipoIntegracao,
 } from "../services/typeService";
 
 /**
@@ -18,10 +18,10 @@ import {
  * /tipoIntegracao/lista:
  *   get:
  *     summary: Retorna uma lista de tipos de integração
- *     tags: 
+ *     tags:
  *       - TipoIntegracao
  *     security:
- *       - bearerAuth: [] 
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Uma Lista de tipos de integração
@@ -38,12 +38,12 @@ import {
  *                     type: string
  */
 export async function getListaTipoIntegracao(req: Request, res: Response) {
-    try {
-        const tipoIntegracao = await listaTipoIntegracao();
-        res.status(200).json(tipoIntegracao);
-    } catch (error) {
-        res.status(500).json({ error: "Erro consultando tipo de integração" });
-    }
+  try {
+    const tipoIntegracao = await listaTipoIntegracao();
+    res.status(200).json(tipoIntegracao);
+  } catch (error) {
+    res.status(500).json({ error: "Erro consultando tipo de integração" });
+  }
 }
 
 /**
@@ -51,10 +51,10 @@ export async function getListaTipoIntegracao(req: Request, res: Response) {
  * /tipoIntegracao/{id}:
  *   get:
  *     summary: Retorna um tipo de integração pelo ID
- *     tags: 
+ *     tags:
  *       - TipoIntegracao
  *     security:
- *       - bearerAuth: [] 
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -78,12 +78,14 @@ export async function getListaTipoIntegracao(req: Request, res: Response) {
  *         description: Tipo de integração não encontrado
  */
 export async function getTipoIntegracao(req: Request, res: Response) {
-    try {
-        const tipoIntegracao = await consultarTipoIntegracao(parseInt(req.params.id, 10));
-        res.json(tipoIntegracao);
-    } catch (error) {
-        res.status(500).json({ error: "Erro consultando tipo de integração" });
-    }
+  try {
+    const tipoIntegracao = await consultarTipoIntegracao(
+      parseInt(req.params.id, 10)
+    );
+    res.json(tipoIntegracao);
+  } catch (error) {
+    res.status(500).json({ error: "Erro consultando tipo de integração" });
+  }
 }
 
 /**
@@ -91,10 +93,10 @@ export async function getTipoIntegracao(req: Request, res: Response) {
  * /tipoIntegracao:
  *   post:
  *     summary: Insere um tipo de integração e retorna o tipo de integração inserido
- *     tags: 
+ *     tags:
  *       - TipoIntegracao
  *     security:
- *       - bearerAuth: [] 
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -120,12 +122,12 @@ export async function getTipoIntegracao(req: Request, res: Response) {
  *                   type: string
  */
 export async function postTipoIntegracao(req: Request, res: Response) {
-    try {
-        const tipoIntegracao = await inserirTipoIntegracao(req.body);
-        res.status(201).json(tipoIntegracao);
-    } catch (error) {
-        res.status(500).json({ error: "Erro inserindo tipo de integração" });
-    }
+  try {
+    const tipoIntegracao = await inserirTipoIntegracao(req.body);
+    res.status(201).json(tipoIntegracao);
+  } catch (error) {
+    res.status(500).json({ error: "Erro inserindo tipo de integração" });
+  }
 }
 
 /**
@@ -133,10 +135,10 @@ export async function postTipoIntegracao(req: Request, res: Response) {
  * /tipoIntegracao/{id}:
  *   put:
  *     summary: Atualiza um tipo de integração existente
- *     tags: 
+ *     tags:
  *       - TipoIntegracao
  *     security:
- *       - bearerAuth: [] 
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -173,13 +175,13 @@ export async function postTipoIntegracao(req: Request, res: Response) {
  *         description: Erro no servidor
  */
 export async function putTipoIntegracao(req: Request, res: Response) {
-    try {
-        const tipoIntegracao = await atualizarTipoIntegracao(
-            parseInt(req.params.id, 10),
-            req.body
-        );
-        res.status(200).json(tipoIntegracao);
-    } catch (error) {
-        res.status(500).json({ error: "Erro atualizando tipo de integração" });
-    }
+  try {
+    const tipoIntegracao = await atualizarTipoIntegracao(
+      parseInt(req.params.id, 10),
+      req.body
+    );
+    res.status(200).json(tipoIntegracao);
+  } catch (error) {
+    res.status(500).json({ error: "Erro atualizando tipo de integração" });
+  }
 }

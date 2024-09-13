@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { atualizarUsuario, consultarUsuario, inserirUsuario, listaUsuario, logUser } from "../services/userService";
+import {
+  atualizarUsuario,
+  consultarUsuario,
+  inserirUsuario,
+  listaUsuario,
+  logUser,
+} from "../services/userService";
 
 /**
  * @swagger
@@ -13,7 +19,7 @@ import { atualizarUsuario, consultarUsuario, inserirUsuario, listaUsuario, logUs
  * /usuario/lista:
  *   get:
  *     summary: Retorna uma lista de usuários
- *     tags: 
+ *     tags:
  *       - Usuário
  *     security:
  *       - bearerAuth: []
@@ -41,12 +47,12 @@ import { atualizarUsuario, consultarUsuario, inserirUsuario, listaUsuario, logUs
  *                     nullable: true
  */
 export async function getListaUsuario(req: Request, res: Response) {
-    try {
-        const usuario = await listaUsuario();
-        res.status(200).json(usuario);
-    } catch (error) {
-        res.status(500).json({ error });
-    }
+  try {
+    const usuario = await listaUsuario();
+    res.status(200).json(usuario);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 }
 
 /**
@@ -54,7 +60,7 @@ export async function getListaUsuario(req: Request, res: Response) {
  * /usuario/{id}:
  *   get:
  *     summary: Retorna um usuário pelo ID
- *     tags: 
+ *     tags:
  *       - Usuário
  *     security:
  *       - bearerAuth: []
@@ -89,12 +95,12 @@ export async function getListaUsuario(req: Request, res: Response) {
  *         description: Usuário não encontrado
  */
 export async function getUsuario(req: Request, res: Response) {
-    try {
-        const usuario = await consultarUsuario(parseInt(req.params.id, 10));
-        res.json(usuario);
-    } catch (error) {
-        res.status(500).json({ error: "Erro ao consultar usuário" });
-    }
+  try {
+    const usuario = await consultarUsuario(parseInt(req.params.id, 10));
+    res.json(usuario);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao consultar usuário" });
+  }
 }
 
 /**
@@ -102,7 +108,7 @@ export async function getUsuario(req: Request, res: Response) {
  * /usuario/login:
  *   post:
  *     summary: Realiza login na aplicação
- *     tags: 
+ *     tags:
  *       - Usuário
  *     security: []
  *     requestBody:
@@ -130,31 +136,27 @@ export async function getUsuario(req: Request, res: Response) {
  *             schema:
  *               type: object
  *               properties:
- *                 id:
- *                   type: integer
- *                 nome:
+ *                 token:
  *                   type: string
- *                 email:
- *                   type: string
- *                 hotelId:
- *                   type: integer
- *                   nullable: true
- *                 hotelNome:
- *                   type: string
- *                   nullable: true
  *       404:
  *         description: Usuário não encontrado
  *       500:
  *         description: Erro ao realizar login
  */
 export async function login(req: Request, res: Response) {
-    try {
-        const token = await logUser({ email: req.body.email, senha: req.body.senha, hotelId: req.body.hotelId });
-        if(!token) return res.status(404).json({ error: "Usuário não encontrado" });
-        res.json(token);
-    } catch (error) {
-        res.status(500).json({ error: "Erro ao realizar login" });
-    }
+  try {
+    const { email, senha, hotelId } = req.body;
+    const token = await logUser({
+      email: email,
+      senha: senha,
+      hotelId: hotelId,
+    });
+    if (!token)
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    res.json(token);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao realizar login" });
+  }
 }
 
 /**
@@ -162,7 +164,7 @@ export async function login(req: Request, res: Response) {
  * /usuario:
  *   post:
  *     summary: Insere um usuário e retorna o usuário inserido
- *     tags: 
+ *     tags:
  *       - Usuário
  *     security:
  *       - bearerAuth: []
@@ -208,12 +210,12 @@ export async function login(req: Request, res: Response) {
  *                   nullable: true
  */
 export async function postUsuario(req: Request, res: Response) {
-    try {
-        const usuario = await inserirUsuario(req.body);
-        res.status(201).json(usuario);
-    } catch (error) {
-        res.status(500).json({ error: "Erro Inserindo usuário" });
-    }
+  try {
+    const usuario = await inserirUsuario(req.body);
+    res.status(201).json(usuario);
+  } catch (error) {
+    res.status(500).json({ error: "Erro Inserindo usuário" });
+  }
 }
 
 /**
@@ -221,7 +223,7 @@ export async function postUsuario(req: Request, res: Response) {
  * /usuario/{id}:
  *   put:
  *     summary: Atualiza um usuário existente
- *     tags: 
+ *     tags:
  *       - Usuário
  *     security:
  *       - bearerAuth: []
@@ -278,13 +280,13 @@ export async function postUsuario(req: Request, res: Response) {
  *         description: Erro no servidor
  */
 export async function putUsuario(req: Request, res: Response) {
-    try {
-        const usuario = await atualizarUsuario(
-            parseInt(req.params.id, 10),
-            req.body
-        );
-        res.status(200).json(usuario);
-    } catch (error) {
-        res.status(500).json({ error: "Erro atualizando usuário" });
-    }
+  try {
+    const usuario = await atualizarUsuario(
+      parseInt(req.params.id, 10),
+      req.body
+    );
+    res.status(200).json(usuario);
+  } catch (error) {
+    res.status(500).json({ error: "Erro atualizando usuário" });
+  }
 }

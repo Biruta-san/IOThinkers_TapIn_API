@@ -15,7 +15,7 @@ import {
 import prisma from "../prismaClient";
 
 // #region PAIS
-export const listaPais = async () => {
+export const listaPais = async (): Promise<getPais[]> => {
   const paises: dbPais[] = await prisma.pais.findMany();
   const mappedPaises: getPais[] = paises.map((pais) => ({
     id: pais.PAIS_ID,
@@ -27,7 +27,7 @@ export const listaPais = async () => {
   return mappedPaises;
 };
 
-export const consultarPais = async (id: number) => {
+export const consultarPais = async (id: number): Promise<getPais | null> => {
   const pais: dbPais | null = await prisma.pais.findFirst({
     where: { PAIS_ID: id },
   });
@@ -43,7 +43,7 @@ export const consultarPais = async (id: number) => {
   return selectedPais;
 };
 
-export const inserirPais = async (data: postPais) => {
+export const inserirPais = async (data: postPais): Promise<getPais> => {
   const pais: dbPais = await prisma.pais.create({
     data: {
       PAIS_Nome: data.nome,
@@ -60,7 +60,10 @@ export const inserirPais = async (data: postPais) => {
   return insertedPais;
 };
 
-export const atualizarPais = async (id: number, data: putPais) => {
+export const atualizarPais = async (
+  id: number,
+  data: putPais
+): Promise<getPais> => {
   const pais: dbPais = await prisma.pais.update({
     where: { PAIS_ID: id },
     data: {
@@ -80,7 +83,9 @@ export const atualizarPais = async (id: number, data: putPais) => {
 // #endregion
 
 // #region ESTADO
-export const listaEstado = async (paisId: number | null) => {
+export const listaEstado = async (
+  paisId: number | null
+): Promise<getEstado[]> => {
   const estados: dbEstado[] = await prisma.estado.findMany({
     where: paisId ? { PAIS_ID: paisId } : {},
     include: { Pais: true },
@@ -96,7 +101,9 @@ export const listaEstado = async (paisId: number | null) => {
   return mappedEstados;
 };
 
-export const consultarEstado = async (id: number) => {
+export const consultarEstado = async (
+  id: number
+): Promise<getEstado | null> => {
   const estado: dbEstado | null = await prisma.estado.findFirst({
     where: { ESTD_ID: id },
     include: { Pais: true },
@@ -114,7 +121,7 @@ export const consultarEstado = async (id: number) => {
   return selectedEstado;
 };
 
-export const inserirEstado = async (data: postEstado) => {
+export const inserirEstado = async (data: postEstado): Promise<getEstado> => {
   const estado: dbEstado = await prisma.estado.create({
     data: {
       ESTD_Nome: data.nome,
@@ -133,7 +140,10 @@ export const inserirEstado = async (data: postEstado) => {
   return insertedEstado;
 };
 
-export const atualizarEstado = async (id: number, data: putEstado) => {
+export const atualizarEstado = async (
+  id: number,
+  data: putEstado
+): Promise<getEstado> => {
   const estado: dbEstado = await prisma.estado.update({
     where: { ESTD_ID: id },
     data: {
@@ -155,10 +165,10 @@ export const atualizarEstado = async (id: number, data: putEstado) => {
 // #endregion
 
 // #region CIDADE
-export const listaCidade = async (
+export const listaCidades = async (
   paisId: number | null,
   estadoId: number | null
-) => {
+): Promise<getCidade[]> => {
   let cidades: dbCidade[] = await prisma.cidade.findMany({
     include: { Estado: { include: { Pais: true } } },
   });
@@ -188,7 +198,9 @@ export const listaCidade = async (
   return mappedCidades;
 };
 
-export const consultarCidade = async (id: number) => {
+export const consultarCidade = async (
+  id: number
+): Promise<getCidade | null> => {
   const cidade: dbCidade | null = await prisma.cidade.findFirst({
     where: { ESTD_ID: id },
     include: { Estado: { include: { Pais: true } } },
@@ -207,7 +219,7 @@ export const consultarCidade = async (id: number) => {
   return selectedCidade;
 };
 
-export const inserirCidade = async (data: postCidade) => {
+export const inserirCidade = async (data: postCidade): Promise<getCidade> => {
   const cidade: dbCidade = await prisma.cidade.create({
     data: {
       CIDA_Nome: data.nome,
@@ -226,7 +238,10 @@ export const inserirCidade = async (data: postCidade) => {
   return insertedCidade;
 };
 
-export const atualizarCidade = async (id: number, data: putCidade) => {
+export const atualizarCidade = async (
+  id: number,
+  data: putCidade
+): Promise<getCidade> => {
   const cidade: dbCidade = await prisma.cidade.update({
     where: { CIDA_ID: id },
     data: {

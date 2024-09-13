@@ -2,42 +2,48 @@ import {
   dbUsuario,
   getUsuario,
   loginUsuario,
+  loginUsuarioResponse,
   postUsuario,
 } from "../models/userModels";
 import prisma from "../prismaClient";
 import { generateToken, JwtPayload } from "../utils/token";
 
-export const listaUsuario = async () => {
-  const usuarios: dbUsuario[] = await prisma.usuario.findMany();
-  const mappedUsuarios: getUsuario[] = usuarios.map((tpIntegracao) => ({
-    id: tpIntegracao.USUA_ID,
-    nome: tpIntegracao.USUA_Nome,
-    email: tpIntegracao.USUA_Email,
-    hotelId: tpIntegracao.HOTL_ID,
-    hotelNome: tpIntegracao.Hotel?.HOTL_Nome,
-  }));
+const mapUsuario = (usuario: dbUsuario): getUsuario => ({
+  id: usuario.USUA_ID,
+  nome: usuario.USUA_Nome,
+  email: usuario.USUA_Email,
+  hotelId: usuario.HOTL_ID,
+  hotelNome: usuario.Hotel?.HOTL_Nome,
+});
+
+export const listaUsuario = async (): Promise<getUsuario[]> => {
+  const usuarios: dbUsuario[] = await prisma.usuario.findMany({
+    include: { Hotel: true },
+  });
+  const mappedUsuarios: getUsuario[] = usuarios.map((usuario) =>
+    mapUsuario(usuario)
+  );
 
   return mappedUsuarios;
 };
 
-export const consultarUsuario = async (id: number) => {
+export const consultarUsuario = async (
+  id: number
+): Promise<getUsuario | null> => {
   const usuario: dbUsuario | null = await prisma.usuario.findFirst({
     where: { USUA_ID: id },
+    include: { Hotel: true },
   });
 
   if (!usuario) return null;
 
-  const insertedUsuario: getUsuario = {
-    id: usuario.USUA_ID,
-    nome: usuario.USUA_Nome,
-    email: usuario.USUA_Email,
-    hotelId: usuario.HOTL_ID,
-    hotelNome: usuario.Hotel?.HOTL_Nome,
-  };
+  const insertedUsuario: getUsuario = mapUsuario(usuario);
   return insertedUsuario;
 };
 
-export const inserirUsuario = async (data: postUsuario) => {
+export const inserirUsuario = async (
+  data: postUsuario
+): Promise<getUsuario> => {
   const usuario: dbUsuario = await prisma.usuario.create({
     data: {
       USUA_Nome: data.nome,
@@ -45,18 +51,16 @@ export const inserirUsuario = async (data: postUsuario) => {
       USUA_Senha: data.senha,
       HOTL_ID: data.hotelId,
     },
+    include: { Hotel: true },
   });
-  const insertedUsuario: getUsuario = {
-    id: usuario.USUA_ID,
-    nome: usuario.USUA_Nome,
-    email: usuario.USUA_Email,
-    hotelId: usuario.HOTL_ID,
-    hotelNome: usuario.Hotel?.HOTL_Nome,
-  };
+  const insertedUsuario: getUsuario = mapUsuario(usuario);
   return insertedUsuario;
 };
 
-export const atualizarUsuario = async (id: number, data: postUsuario) => {
+export const atualizarUsuario = async (
+  id: number,
+  data: postUsuario
+): Promise<getUsuario> => {
   const usuario: dbUsuario = await prisma.usuario.update({
     where: { USUA_ID: id },
     data: {
@@ -65,6 +69,7 @@ export const atualizarUsuario = async (id: number, data: postUsuario) => {
       USUA_Senha: data.senha,
       HOTL_ID: data.hotelId,
     },
+    include: { Hotel: true },
   });
   const updatedUsuario: getUsuario = {
     id: usuario.USUA_ID,
@@ -76,13 +81,16 @@ export const atualizarUsuario = async (id: number, data: postUsuario) => {
   return updatedUsuario;
 };
 
-export const logUser = async (data: loginUsuario) => {
+export const logUser = async (
+  data: loginUsuario
+): Promise<loginUsuarioResponse | null> => {
   const user = await prisma.usuario.findFirst({
     where: {
       USUA_Email: data.email,
       USUA_Senha: data.senha,
       HOTL_ID: data.hotelId,
     },
+    include: { Hotel: true },
   });
   if (!user) return null;
 
@@ -96,5 +104,7 @@ export const logUser = async (data: loginUsuario) => {
 
   if (!tokenValidated) return null;
 
-  return tokenValidated;
+  const userLogged: loginUsuarioResponse = { token: tokenValidated };
+
+  return userLogged;
 };
