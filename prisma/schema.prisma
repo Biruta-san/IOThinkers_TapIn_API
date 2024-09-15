@@ -86,18 +86,20 @@ model HotelImagem {
   HOTL_ID          Int     @db.Int
   Hotel            Hotel   @relation(fields: [HOTL_ID], references: [HOTL_ID])
   HOIM_NomeArquivo String  @db.VarChar(125)
-  HOIM_GUIDArquivo String? @db.VarChar(255)
+  HOIM_GUIDArquivo String  @db.VarChar(255)
   HOIM_Base64      String? @db.LongText
 }
 
 model HotelEndereco {
-  HOEN_ID     Int    @id @default(autoincrement()) @db.Int
-  HOTL_ID     Int    @db.Int
-  Hotel       Hotel  @relation(fields: [HOTL_ID], references: [HOTL_ID])
-  HOEN_Numero Int    @db.Int
-  HOEN_Bairro String @db.VarChar(125)
-  CIDA_ID     Int    @db.Int
-  Cidade      Cidade @relation(fields: [CIDA_ID], references: [CIDA_ID])
+  HOEN_ID       Int    @id @default(autoincrement()) @db.Int
+  HOTL_ID       Int    @db.Int
+  Hotel         Hotel  @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  HOEN_Numero   Int    @db.Int
+  HOEN_Bairro   String @db.VarChar(125)
+  HOEN_Endereco String @db.VarChar(255)
+  HOEN_CEP      String @db.VarChar(10)
+  CIDA_ID       Int    @db.Int
+  Cidade        Cidade @relation(fields: [CIDA_ID], references: [CIDA_ID])
 }
 
 model HotelQuarto {
@@ -106,6 +108,7 @@ model HotelQuarto {
   Hotel                   Hotel                    @relation(fields: [HOTL_ID], references: [HOTL_ID])
   HOQT_Numero             Int                      @db.Int
   HOQT_ValorDiaria        Decimal                  @db.Decimal(12, 2)
+  HOQT_CapacidadePessoa   Int                      @db.TinyInt
   HOQT_Ativo              Boolean
   HotelQuartoImagens      HotelQuartoImagem[]
   HotelQuartoAgendamentos HotelQuartoAgendamento[]
@@ -116,7 +119,7 @@ model HotelQuartoImagem {
   HOQT_ID          Int         @db.Int
   HotelQuarto      HotelQuarto @relation(fields: [HOQT_ID], references: [HOQT_ID])
   HOQI_NomeArquivo String      @db.VarChar(125)
-  HOQI_GUIDArquivo String?     @db.VarChar(255)
+  HOQI_GUIDArquivo String      @db.VarChar(255)
   HOQI_Base64      String?     @db.LongText
 }
 

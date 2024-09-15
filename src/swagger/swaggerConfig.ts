@@ -30,6 +30,10 @@ const options = {
         name: "Localização",
         description: "Endpoints relacionados a localizações",
       },
+      {
+        name: "Hotel",
+        description: "Endpoints relacionados a hotéis",
+      },
     ],
   },
   apis: ["./src/controllers/*.ts"],

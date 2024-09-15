@@ -3,6 +3,7 @@ import typeRoutes from "./routes/typeRoutes";
 import userRoutes from "./routes/userRoutes";
 import localizationRoutes from "./routes/localizationRoutes";
 import dotenv from "dotenv";
+import hotelRoutes from "./routes/hotelRoutes";
 
 // Inicializando express
 const app: Express = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/usuario", userRoutes);
 app.use("/tipoIntegracao", typeRoutes);
 app.use("/localizacao", localizationRoutes);
+app.use("/hotel", hotelRoutes);
 
 // #endregion
 
