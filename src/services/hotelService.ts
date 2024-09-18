@@ -326,15 +326,89 @@ export const atualizarHotel = async (
   id: number,
   data: putHotel
 ): Promise<getHotel> => {
-  // if (data.ExcluirHotelQuarto) {
-  //   await prisma.hotelQuarto.deleteMany({
-  //     where: { HOQT_ID: {in: data.ExcluirHotelQuarto} },
-  //   });
-  // }
+  if (data.ExcluirHotelQuarto) {
+    await prisma.hotelQuartoImagem.deleteMany({
+      where: { HOQT_ID: { in: data.ExcluirHotelQuarto } },
+    });
+    await prisma.hotelQuartoAgendamento.deleteMany({
+      where: { HOQT_ID: { in: data.ExcluirHotelQuarto } },
+    });
+    await prisma.hotelQuarto.deleteMany({
+      where: { HOQT_ID: { in: data.ExcluirHotelQuarto } },
+    });
+  }
+
+  if (data.ExcluirHotelIntegracaoArquivo) {
+    await prisma.hotelIntegracaoArquivo.deleteMany({
+      where: { HOIA_ID: { in: data.ExcluirHotelIntegracaoArquivo } },
+    });
+  }
+
+  if (data.ExcluirHotelImagem) {
+    await prisma.hotelImagem.deleteMany({
+      where: { HOIM_ID: { in: data.ExcluirHotelImagem } },
+    });
+  }
+
+  if (data.ExcluirHotelEndereco) {
+    await prisma.hotelEndereco.deleteMany({
+      where: { HOEN_ID: { in: data.ExcluirHotelEndereco } },
+    });
+  }
+
+  const upsertHotelImagens = async () => {
+    if (data.HotelImagem) {
+      data.HotelImagem?.forEach(async (x) => {
+        if (x.id === 0) {
+          await prisma.hotelImagem.create({
+            data: {
+              HOTL_ID: id,
+              HOIM_NomeArquivo: x.nomeArquivo,
+              HOIM_GUIDArquivo: uuidv4(),
+              HOIM_Base64: x.base64,
+            },
+          });
+        } else {
+          await prisma.hotelImagem.update({
+            where: { HOIM_ID: x.id },
+            data: {
+              HOTL_ID: id,
+              HOIM_NomeArquivo: x.nomeArquivo,
+              HOIM_GUIDArquivo: x.guidArquivo,
+              HOIM_Base64: x.base64,
+            },
+          });
+        }
+      });
+    }
+  };
+
+  await Promise.all([upsertHotelImagens]);
 
   const hotel: dbHotel = await prisma.hotel.update({
     where: { HOTL_ID: id },
-    data: { HOTL_Nome: data.nome },
+    data: {
+      HOTL_Nome: data.nome,
+      HOTL_IdentificacaoTributaria: data.identificacaoTributaria,
+      HOTL_AcumulaPontuacao: data.acumulaPontuacao,
+      HOTL_ConversaoPontos: data.conversaoPontos,
+    },
+    include: {
+      HotelEnderecos: {
+        include: {
+          Cidade: { include: { Estado: { include: { Pais: true } } } },
+        },
+      },
+      HotelQuarto: {
+        include: {
+          HotelQuartoAgendamentos: { include: { Usuario: true } },
+          HotelQuartoImagens: true,
+        },
+      },
+      HotelImagem: true,
+      HotelIntegracaoArquivo: { include: { TipoIntegracao: true } },
+      Usuarios: true,
+    },
   });
 
   const updatedHotel: getHotel = mapHotel(hotel);

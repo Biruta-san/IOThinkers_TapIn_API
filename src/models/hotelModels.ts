@@ -99,6 +99,7 @@ export interface postHotelIntegracaoArquivo {
 }
 
 export interface putHotelIntegracaoArquivo {
+  id: number;
   hotelId: number;
   tipoIntegracaoId: number;
   diretorio: string;
@@ -133,6 +134,7 @@ export interface postHotelImagem {
 }
 
 export interface putHotelImagem {
+  id: number;
   hotelId: number;
   nomeArquivo: string;
   guidArquivo: string;
@@ -177,10 +179,11 @@ export interface postHotelEndereco {
 }
 
 export interface putHotelEndereco {
-  hotelId?: number;
-  numero?: number;
-  bairro?: string;
-  cidadeId?: number;
+  id: number;
+  hotelId: number;
+  numero: number;
+  bairro: string;
+  cidadeId: number;
   endereco: string;
   cep: string;
 }
@@ -220,6 +223,7 @@ export interface postHotelQuarto {
 }
 
 export interface putHotelQuarto {
+  id: number;
   hotelId: number;
   numero: number;
   valorDiaria: Decimal;
@@ -257,6 +261,7 @@ export interface postHotelQuartoImagem {
 }
 
 export interface putHotelQuartoImagem {
+  id: number;
   hotelQuartoId: number;
   nomeArquivo: string;
   guidArquivo: string;
@@ -289,6 +294,7 @@ export interface postHotelQuartoAgendamento {
 }
 
 export interface putHotelQuartoAgendamento {
+  id: number;
   checkIn?: Date;
   checkOut?: Date;
   hotelQuartoId?: number;
