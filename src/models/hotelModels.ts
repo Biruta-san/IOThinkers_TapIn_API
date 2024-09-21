@@ -295,9 +295,9 @@ export interface postHotelQuartoAgendamento {
 
 export interface putHotelQuartoAgendamento {
   id: number;
-  checkIn?: Date;
-  checkOut?: Date;
-  hotelQuartoId?: number;
-  usuarioId?: number;
+  checkIn: Date;
+  checkOut: Date;
+  hotelQuartoId: number;
+  usuarioId: number;
 }
 // #endregion

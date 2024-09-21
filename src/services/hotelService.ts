@@ -20,6 +20,8 @@ import {
   postHotelQuartoAgendamento,
   postHotelQuartoImagem,
   putHotel,
+  putHotelQuartoAgendamento,
+  putHotelQuartoImagem,
 } from "../models/hotelModels";
 import prisma from "../prismaClient";
 import { v4 as uuidv4 } from "uuid";
@@ -325,7 +327,8 @@ export const inserirHotel = async (data: postHotel): Promise<getHotel> => {
 export const atualizarHotel = async (
   id: number,
   data: putHotel
-): Promise<getHotel> => {
+): Promise<getHotel | null> => {
+  // #region DELETAR REGISTROS
   if (data.ExcluirHotelQuarto) {
     await prisma.hotelQuartoImagem.deleteMany({
       where: { HOQT_ID: { in: data.ExcluirHotelQuarto } },
@@ -355,8 +358,10 @@ export const atualizarHotel = async (
       where: { HOEN_ID: { in: data.ExcluirHotelEndereco } },
     });
   }
+  // #endregion
 
-  const upsertHotelImagens = async () => {
+  //#region INSERIR OU ATUALIZAR REGISTROS DEPENDENTES
+  const upsertHotelImagens = async (): Promise<void> => {
     if (data.HotelImagem) {
       data.HotelImagem?.forEach(async (x) => {
         if (x.id === 0) {
@@ -383,34 +388,211 @@ export const atualizarHotel = async (
     }
   };
 
-  await Promise.all([upsertHotelImagens]);
+  // #region INSERIR OU ATUALIZAR HOTEL QUARTO
+  const upsertHotelQuartos = async (): Promise<void> => {
+    if (data.HotelQuarto) {
+      data.HotelQuarto?.forEach(async (x) => {
+        if (x.id === 0) {
+          await prisma.hotelQuarto.create({
+            data: {
+              HOTL_ID: id,
+              HOQT_Numero: x.numero,
+              HOQT_ValorDiaria: x.valorDiaria,
+              HOQT_Ativo: x.ativo,
+              HOQT_CapacidadePessoa: x.capacidadePessoa,
+              HotelQuartoImagens: {
+                create: x.HotelQuartoImagens?.map((y) => ({
+                  HOQI_NomeArquivo: y.nomeArquivo,
+                  HOQI_GUIDArquivo: uuidv4(),
+                  HOQI_Base64: y.base64,
+                })),
+              },
+              HotelQuartoAgendamentos: {
+                create: x.HotelQuartoAgendamentos?.map((y) => ({
+                  HOQA_CheckIn: y.checkIn,
+                  HOQA_CheckOut: y.checkOut,
+                  USUA_ID: y.usuarioId,
+                })),
+              },
+            },
+          });
+        } else {
+          await prisma.hotelQuarto.update({
+            where: { HOQT_ID: x.id },
+            data: {
+              HOTL_ID: id,
+              HOQT_Numero: x.numero,
+              HOQT_ValorDiaria: x.valorDiaria,
+              HOQT_Ativo: x.ativo,
+              HOQT_CapacidadePessoa: x.capacidadePessoa,
+            },
+          });
+          await upsertHotelQuartoAgendamentos(x.HotelQuartoAgendamentos);
+          await upsertHotelQuartoImagens(x.HotelQuartoImagens);
+        }
+      });
+    }
+  };
 
-  const hotel: dbHotel = await prisma.hotel.update({
-    where: { HOTL_ID: id },
-    data: {
-      HOTL_Nome: data.nome,
-      HOTL_IdentificacaoTributaria: data.identificacaoTributaria,
-      HOTL_AcumulaPontuacao: data.acumulaPontuacao,
-      HOTL_ConversaoPontos: data.conversaoPontos,
-    },
-    include: {
-      HotelEnderecos: {
-        include: {
-          Cidade: { include: { Estado: { include: { Pais: true } } } },
-        },
-      },
-      HotelQuarto: {
-        include: {
-          HotelQuartoAgendamentos: { include: { Usuario: true } },
-          HotelQuartoImagens: true,
-        },
-      },
-      HotelImagem: true,
-      HotelIntegracaoArquivo: { include: { TipoIntegracao: true } },
-      Usuarios: true,
-    },
-  });
+  const upsertHotelQuartoAgendamentos = async (
+    hotelAgendamentos: putHotelQuartoAgendamento[] | null
+  ): Promise<void> => {
+    if (hotelAgendamentos) {
+      hotelAgendamentos.forEach(async (x) => {
+        if (x.id === 0) {
+          await prisma.hotelQuartoAgendamento.create({
+            data: {
+              HOQT_ID: x.hotelQuartoId,
+              HOQA_CheckIn: x.checkIn,
+              HOQA_CheckOut: x.checkOut,
+              USUA_ID: x.usuarioId,
+            },
+          });
+        } else {
+          await prisma.hotelQuartoAgendamento.update({
+            where: { HOQA_ID: x.id },
+            data: {
+              HOQT_ID: x.hotelQuartoId,
+              HOQA_CheckIn: x.checkIn,
+              HOQA_CheckOut: x.checkOut,
+              USUA_ID: x.usuarioId,
+            },
+          });
+        }
+      });
+    }
+  };
 
-  const updatedHotel: getHotel = mapHotel(hotel);
-  return updatedHotel;
+  const upsertHotelQuartoImagens = async (
+    hotelQuartoImagens: putHotelQuartoImagem[] | null
+  ): Promise<void> => {
+    if (hotelQuartoImagens) {
+      hotelQuartoImagens.forEach(async (x) => {
+        if (x.id === 0) {
+          await prisma.hotelQuartoImagem.create({
+            data: {
+              HOQT_ID: x.hotelQuartoId,
+              HOQI_NomeArquivo: x.nomeArquivo,
+              HOQI_GUIDArquivo: uuidv4(),
+              HOQI_Base64: x.base64,
+            },
+          });
+        } else {
+          await prisma.hotelQuartoImagem.update({
+            where: { HOQI_ID: x.id },
+            data: {
+              HOQT_ID: x.hotelQuartoId,
+              HOQI_NomeArquivo: x.nomeArquivo,
+              HOQI_GUIDArquivo: x.guidArquivo,
+              HOQI_Base64: x.base64,
+            },
+          });
+        }
+      });
+    }
+  };
+  // #endregion
+
+  const upsertHotelEnderecos = async (): Promise<void> => {
+    if (data.HotelEnderecos) {
+      data.HotelEnderecos?.forEach(async (x) => {
+        if (x.id === 0) {
+          await prisma.hotelEndereco.create({
+            data: {
+              HOTL_ID: id,
+              HOEN_Numero: x.numero,
+              HOEN_Bairro: x.bairro,
+              HOEN_Endereco: x.endereco,
+              HOEN_CEP: x.cep,
+              CIDA_ID: x.cidadeId,
+            },
+          });
+        } else {
+          await prisma.hotelEndereco.update({
+            where: { HOEN_ID: x.id },
+            data: {
+              HOTL_ID: id,
+              HOEN_Numero: x.numero,
+              HOEN_Bairro: x.bairro,
+              HOEN_Endereco: x.endereco,
+              HOEN_CEP: x.cep,
+              CIDA_ID: x.cidadeId,
+            },
+          });
+        }
+      });
+    }
+  };
+
+  const upsertHotelIntegracaoArquivo = async (): Promise<void> => {
+    if (data.HotelIntegracaoArquivo) {
+      data.HotelIntegracaoArquivo?.forEach(async (x) => {
+        if (x.id === 0) {
+          await prisma.hotelIntegracaoArquivo.create({
+            data: {
+              HOTL_ID: id,
+              TPIT_ID: x.tipoIntegracaoId,
+              HOIA_Diretorio: x.diretorio,
+              HOIA_Credencial: x.credencial,
+              HOIA_Senha: x.senha,
+              HOIA_EnderecoIntegracao: x.enderecoIntegracao,
+            },
+          });
+        } else {
+          await prisma.hotelIntegracaoArquivo.update({
+            where: { HOIA_ID: x.id },
+            data: {
+              HOTL_ID: id,
+              TPIT_ID: x.tipoIntegracaoId,
+              HOIA_Diretorio: x.diretorio,
+              HOIA_Credencial: x.credencial,
+              HOIA_Senha: x.senha,
+              HOIA_EnderecoIntegracao: x.enderecoIntegracao,
+            },
+          });
+        }
+      });
+    }
+  };
+  // #endregion
+
+  const updateHotel = async (): Promise<void> => {
+    await prisma.hotel.update({
+      where: { HOTL_ID: id },
+      data: {
+        HOTL_Nome: data.nome,
+        HOTL_IdentificacaoTributaria: data.identificacaoTributaria,
+        HOTL_AcumulaPontuacao: data.acumulaPontuacao,
+        HOTL_ConversaoPontos: data.conversaoPontos,
+      },
+      include: {
+        HotelEnderecos: {
+          include: {
+            Cidade: { include: { Estado: { include: { Pais: true } } } },
+          },
+        },
+        HotelQuarto: {
+          include: {
+            HotelQuartoAgendamentos: { include: { Usuario: true } },
+            HotelQuartoImagens: true,
+          },
+        },
+        HotelImagem: true,
+        HotelIntegracaoArquivo: { include: { TipoIntegracao: true } },
+        Usuarios: true,
+      },
+    });
+  };
+
+  await Promise.all([
+    upsertHotelImagens,
+    upsertHotelQuartos,
+    upsertHotelEnderecos,
+    upsertHotelIntegracaoArquivo,
+    updateHotel,
+  ]);
+
+  const hotel: getHotel | null = await consultarHotel(id);
+
+  return hotel;
 };
