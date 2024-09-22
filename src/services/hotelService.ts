@@ -174,41 +174,69 @@ export const listaHotel = async (
   checkOut: Date | null,
   numeroPessoas: number | null
 ): Promise<gridHotel[] | null> => {
-  let gridHotel: dbHotel[];
+  let gridHotel: dbHotel[] = await prisma.hotel.findMany({
+    include: {
+      HotelEnderecos: {
+        include: {
+          Cidade: { include: { Estado: { include: { Pais: true } } } },
+        },
+      },
+      HotelQuarto: {
+        include: { HotelQuartoAgendamentos: true, HotelQuartoImagens: true },
+      },
+      HotelImagem: true,
+    },
+  });
 
   if (pesquisa) {
-    gridHotel = await prisma.hotel.findMany({
-      include: {
-        HotelEnderecos: {
-          include: {
-            Cidade: { include: { Estado: { include: { Pais: true } } } },
-          },
-        },
-        HotelQuarto: {
-          include: { HotelQuartoAgendamentos: true, HotelQuartoImagens: true },
-        },
-        HotelImagem: true,
-      },
-      where: {
-        HOTL_Nome: { contains: pesquisa },
-        HotelEnderecos: {
-          some: { Cidade: { CIDA_Nome: { contains: pesquisa } } },
-        },
-      },
-    });
-  } else {
-    gridHotel = await prisma.hotel.findMany({});
+    const pesquisaLower = pesquisa.toLowerCase();
+    gridHotel = gridHotel.filter(
+      (hotel) =>
+        hotel.HOTL_Nome.toLowerCase().includes(pesquisaLower) ||
+        hotel.HotelEnderecos?.some((endereco) =>
+          endereco.Cidade?.CIDA_Nome.toLowerCase().includes(pesquisaLower)
+        )
+    );
   }
 
   if (checkIn && checkOut && numeroPessoas) {
-    gridHotel.filter((hotel) =>
+    gridHotel = gridHotel.filter((hotel) =>
       hotel.HotelQuarto?.some(
-        (x) => x.HOQT_CapacidadePessoa >= numeroPessoas
-        // &&x.HotelQuartoAgendamentos?.every(
-        //   (y) => y.HOQA_CheckIn > checkOut || y.HOQA_CheckOut < checkIn
-        // )
+        (quarto) =>
+          quarto.HOQT_CapacidadePessoa >= numeroPessoas &&
+          quarto.HotelQuartoAgendamentos?.every(
+            (agendamento) =>
+              agendamento.HOQA_CheckOut < checkIn ||
+              agendamento.HOQA_CheckIn > checkOut
+          )
       )
     );
+  } else {
+    if (checkIn) {
+      gridHotel = gridHotel.filter((hotel) =>
+        hotel.HotelQuarto?.some((quarto) =>
+          quarto.HotelQuartoAgendamentos?.every(
+            (agendamento) => agendamento.HOQA_CheckOut < checkIn
+          )
+        )
+      );
+    }
+    if (checkOut) {
+      gridHotel = gridHotel.filter((hotel) =>
+        hotel.HotelQuarto?.some((quarto) =>
+          quarto.HotelQuartoAgendamentos?.every(
+            (agendamento) => agendamento.HOQA_CheckIn > checkOut
+          )
+        )
+      );
+    }
+    if (numeroPessoas) {
+      gridHotel = gridHotel.filter((hotel) =>
+        hotel.HotelQuarto?.some(
+          (quarto) => quarto.HOQT_CapacidadePessoa >= numeroPessoas
+        )
+      );
+    }
   }
 
   const mappedTipoIntegracoes: gridHotel[] = gridHotel.map((hotel) =>
@@ -268,8 +296,8 @@ export const inserirHotel = async (data: postHotel): Promise<getHotel> => {
           HotelQuartoAgendamentos: {
             create: x.HotelQuartoAgendamentos?.map(
               (y: postHotelQuartoAgendamento) => ({
-                HOQA_CheckIn: y.checkIn,
-                HOQA_CheckOut: y.checkOut,
+                HOQA_CheckIn: y.checkIn ? new Date(y.checkIn) : new Date(),
+                HOQA_CheckOut: y.checkOut ? new Date(y.checkOut) : new Date(),
                 USUA_ID: y.usuarioId,
               })
             ),
@@ -443,8 +471,8 @@ export const atualizarHotel = async (
           await prisma.hotelQuartoAgendamento.create({
             data: {
               HOQT_ID: x.hotelQuartoId,
-              HOQA_CheckIn: x.checkIn,
-              HOQA_CheckOut: x.checkOut,
+              HOQA_CheckIn: x.checkIn ? new Date(x.checkIn) : new Date(),
+              HOQA_CheckOut: x.checkOut ? new Date(x.checkOut) : new Date(),
               USUA_ID: x.usuarioId,
             },
           });
@@ -453,8 +481,8 @@ export const atualizarHotel = async (
             where: { HOQA_ID: x.id },
             data: {
               HOQT_ID: x.hotelQuartoId,
-              HOQA_CheckIn: x.checkIn,
-              HOQA_CheckOut: x.checkOut,
+              HOQA_CheckIn: x.checkIn ? new Date(x.checkIn) : new Date(),
+              HOQA_CheckOut: x.checkOut ? new Date(x.checkOut) : new Date(),
               USUA_ID: x.usuarioId,
             },
           });

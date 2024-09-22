@@ -20,3 +20,6 @@ ALTER TABLE `hotelquarto` ADD COLUMN `HOQT_CapacidadePessoa` TINYINT NOT NULL;
 
 -- AlterTable
 ALTER TABLE `hotelquartoimagem` MODIFY `HOQI_GUIDArquivo` VARCHAR(255) NOT NULL;
+
+-- Inserir tipo de integração
+INSERT INTO TipoIntegracao (TPIT_ID, TPIT_Nome) VALUES (1, 'Firebase');

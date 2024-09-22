@@ -90,7 +90,6 @@ export interface getHotelIntegracaoArquivo {
 }
 
 export interface postHotelIntegracaoArquivo {
-  hotelId: number;
   tipoIntegracaoId: number;
   diretorio: string;
   credencial: string;
@@ -127,7 +126,6 @@ export interface getHotelImagem {
 }
 
 export interface postHotelImagem {
-  hotelId: number;
   nomeArquivo: string;
   guidArquivo: string;
   base64?: string | null;
@@ -170,7 +168,6 @@ export interface getHotelEndereco {
 }
 
 export interface postHotelEndereco {
-  hotelId: number;
   numero: number;
   bairro: string;
   cidadeId: number;
@@ -213,7 +210,6 @@ export interface getHotelQuarto {
 }
 
 export interface postHotelQuarto {
-  hotelId: number;
   numero: number;
   valorDiaria: Decimal;
   ativo: boolean;
@@ -254,7 +250,6 @@ export interface getHotelQuartoImagem {
 }
 
 export interface postHotelQuartoImagem {
-  hotelQuartoId: number;
   nomeArquivo: string;
   guidArquivo?: string;
   base64?: string | null;
@@ -289,7 +284,6 @@ export interface getHotelQuartoAgendamento {
 export interface postHotelQuartoAgendamento {
   checkIn: Date;
   checkOut: Date;
-  hotelQuartoId: number;
   usuarioId: number;
 }
 
