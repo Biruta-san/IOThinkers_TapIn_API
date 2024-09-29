@@ -9,17 +9,17 @@
 
 */
 -- AlterTable
-ALTER TABLE `hotelendereco` ADD COLUMN `HOEN_CEP` VARCHAR(10) NOT NULL,
+ALTER TABLE `HotelEndereco` ADD COLUMN `HOEN_CEP` VARCHAR(10) NOT NULL,
     ADD COLUMN `HOEN_Endereco` VARCHAR(255) NOT NULL;
 
 -- AlterTable
-ALTER TABLE `hotelimagem` MODIFY `HOIM_GUIDArquivo` VARCHAR(255) NOT NULL;
+ALTER TABLE `HotelImagem` MODIFY `HOIM_GUIDArquivo` VARCHAR(255) NOT NULL;
 
 -- AlterTable
-ALTER TABLE `hotelquarto` ADD COLUMN `HOQT_CapacidadePessoa` TINYINT NOT NULL;
+ALTER TABLE `HotelQuarto` ADD COLUMN `HOQT_CapacidadePessoa` TINYINT NOT NULL;
 
 -- AlterTable
-ALTER TABLE `hotelquartoimagem` MODIFY `HOQI_GUIDArquivo` VARCHAR(255) NOT NULL;
+ALTER TABLE `HotelQuartoImagem` MODIFY `HOQI_GUIDArquivo` VARCHAR(255) NOT NULL;
 
 -- Inserir tipo de integração
 INSERT INTO TipoIntegracao (TPIT_ID, TPIT_Nome) VALUES (1, 'Firebase');
