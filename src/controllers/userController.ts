@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   atualizarUsuario,
+  consultarAgendamentoUsuario,
   consultarUsuario,
   inserirUsuario,
   listaUsuario,
@@ -49,6 +50,8 @@ import {
 export async function getListaUsuario(req: Request, res: Response) {
   try {
     const usuario = await listaUsuario();
+    if (!usuario)
+      return res.status(404).json({ error: "Usuário não encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
     res.status(500).json({ error });
@@ -97,7 +100,112 @@ export async function getListaUsuario(req: Request, res: Response) {
 export async function getUsuario(req: Request, res: Response) {
   try {
     const usuario = await consultarUsuario(parseInt(req.params.id, 10));
+    if (!usuario)
+      return res.status(404).json({ error: "Usuário não encontrado" });
     res.json(usuario);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao consultar usuário" });
+  }
+}
+
+export interface getUsuarioAgendamento {
+  id: number;
+  checkIn: Date;
+  checkOut: Date;
+  hotelId: number;
+  hotelNome: string;
+  hotelEndereco: string;
+  hotelQuartoId: number;
+  hotelQuartoNumero: number;
+  usuarioId: number;
+}
+
+/**
+ * @swagger
+ * /usuario/agendamentos/{id}:
+ *   get:
+ *     summary: Agendamentos de usuário
+ *     description: Retorna os agendamentos de um usuário pelo ID
+ *     tags:
+ *       - Usuário
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID do usuário
+ *     responses:
+ *       200:
+ *         description: Sucesso ao consultar agendamentos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 123
+ *                   checkIn:
+ *                     type: string
+ *                     format: date
+ *                     example: "2023-08-10"
+ *                   checkOut:
+ *                     type: string
+ *                     format: date
+ *                     example: "2023-08-15"
+ *                   hotelId:
+ *                     type: integer
+ *                     example: 789
+ *                   hotelNome:
+ *                     type: string
+ *                     example: "Hotel Example"
+ *                   hotelEndereco:
+ *                     type: string
+ *                     example: "123 Rua Principal"
+ *                   hotelQuartoId:
+ *                     type: integer
+ *                     example: 456
+ *                   hotelQuartoNumero:
+ *                     type: integer
+ *                     example: 101
+ *                   usuarioId:
+ *                     type: integer
+ *                     example: 1
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Usuário não encontrado"
+ *       500:
+ *         description: Erro ao consultar usuário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erro ao consultar usuário"
+ */
+export async function getUsuarioAgendamento(req: Request, res: Response) {
+  try {
+    const usuarioAgendamentos = await consultarAgendamentoUsuario(
+      parseInt(req.params.id, 10)
+    );
+    if (!usuarioAgendamentos)
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    res.json(usuarioAgendamentos);
   } catch (error) {
     res.status(500).json({ error: "Erro ao consultar usuário" });
   }

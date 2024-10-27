@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   getListaUsuario,
   getUsuario,
+  getUsuarioAgendamento,
   login,
   postUsuario,
   putUsuario,
@@ -18,6 +19,9 @@ userRoutes.get("/lista", authenticateToken, getListaUsuario);
 
 // Rota para get de usuário por id
 userRoutes.get("/:id", authenticateToken, getUsuario);
+
+// Rota para get agendamentos de usuário
+userRoutes.get("/agendamentos/:id", authenticateToken, getUsuarioAgendamento);
 
 // Rota para post de usuário
 userRoutes.post("/", authenticateToken, postUsuario);

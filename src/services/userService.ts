@@ -1,6 +1,10 @@
 import {
+  getHotelQuartoAgendamento,
+} from "../models/hotelModels";
+import {
   dbUsuario,
   getUsuario,
+  getUsuarioAgendamento,
   loginUsuario,
   loginUsuarioResponse,
   postUsuario,
@@ -39,6 +43,38 @@ export const consultarUsuario = async (
 
   const insertedUsuario: getUsuario = mapUsuario(usuario);
   return insertedUsuario;
+};
+
+export const consultarAgendamentoUsuario = async (
+  usuarioId: number
+): Promise<getHotelQuartoAgendamento[] | null> => {
+  const agendamentos = await prisma.hotelQuartoAgendamento.findMany({
+    where: { USUA_ID: usuarioId },
+    include: {
+      HotelQuarto: {
+        include: { Hotel: { include: { HotelEnderecos: true } } },
+      },
+    },
+  });
+
+  if (!agendamentos || agendamentos?.length <= 0) return null;
+
+  const mappedAgendamentos: getUsuarioAgendamento[] = agendamentos.map(
+    (agendamento) => ({
+      id: agendamento.HOQA_ID,
+      checkIn: agendamento.HOQA_CheckIn,
+      checkOut: agendamento.HOQA_CheckOut,
+      hotelId: agendamento.HotelQuarto.Hotel.HOTL_ID,
+      hotelNome: agendamento.HotelQuarto.Hotel.HOTL_Nome,
+      hotelEndereco:
+        agendamento.HotelQuarto?.Hotel?.HotelEnderecos[0]?.HOEN_Endereco ?? "",
+      hotelQuartoId: agendamento.HOQT_ID,
+      hotelQuartoNumero: agendamento.HotelQuarto.HOQT_Numero,
+      usuarioId: agendamento.USUA_ID,
+    })
+  );
+
+  return mappedAgendamentos;
 };
 
 export const inserirUsuario = async (

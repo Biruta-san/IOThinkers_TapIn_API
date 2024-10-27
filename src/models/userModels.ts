@@ -20,6 +20,18 @@ export interface getUsuario {
   hotelNome?: string | null;
 }
 
+export interface getUsuarioAgendamento {
+  id: number;
+  checkIn: Date;
+  checkOut: Date;
+  hotelId: number;
+  hotelNome: string;
+  hotelEndereco: string;
+  hotelQuartoId: number;
+  hotelQuartoNumero: number;
+  usuarioId: number;
+}
+
 export interface postUsuario {
   nome: string;
   email: string;
