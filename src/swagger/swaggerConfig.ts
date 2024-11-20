@@ -34,6 +34,10 @@ const options = {
         name: "Hotel",
         description: "Endpoints relacionados a hotéis",
       },
+      {
+        name: "Encryption",
+        description: "Endpoints relacionados a encriptação",
+      },
     ],
   },
   apis: ["./src/controllers/*.ts"],

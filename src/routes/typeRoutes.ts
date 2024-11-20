@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getEncrypted,
   getListaTipoIntegracao,
   getTipoIntegracao,
   postTipoIntegracao,
@@ -23,6 +24,9 @@ typeRoutes.post("/", authenticateToken, postTipoIntegracao);
 
 // Rota para put de tipo de integração
 typeRoutes.put("/:id", authenticateToken, putTipoIntegracao);
+
+// Rota para get de dados encriptados
+typeRoutes.post("/getEncrypted", authenticateToken, getEncrypted);
 
 // #endregion
 

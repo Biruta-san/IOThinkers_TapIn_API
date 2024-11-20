@@ -24,12 +24,14 @@ export interface getUsuarioAgendamento {
   id: number;
   checkIn: Date;
   checkOut: Date;
+  confirmado: boolean;
   hotelId: number;
   hotelNome: string;
   hotelEndereco: string;
   hotelQuartoId: number;
   hotelQuartoNumero: number;
   usuarioId: number;
+  usuarioNome: string;
 }
 
 export interface postUsuario {

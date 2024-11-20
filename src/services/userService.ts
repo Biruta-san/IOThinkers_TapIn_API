@@ -1,6 +1,4 @@
-import {
-  getHotelQuartoAgendamento,
-} from "../models/hotelModels";
+import { getHotelQuartoAgendamento } from "../models/hotelModels";
 import {
   dbUsuario,
   getUsuario,
@@ -47,10 +45,11 @@ export const consultarUsuario = async (
 
 export const consultarAgendamentoUsuario = async (
   usuarioId: number
-): Promise<getHotelQuartoAgendamento[] | null> => {
+): Promise<getUsuarioAgendamento[] | null> => {
   const agendamentos = await prisma.hotelQuartoAgendamento.findMany({
     where: { USUA_ID: usuarioId },
     include: {
+      Usuario: true,
       HotelQuarto: {
         include: { Hotel: { include: { HotelEnderecos: true } } },
       },
@@ -64,6 +63,7 @@ export const consultarAgendamentoUsuario = async (
       id: agendamento.HOQA_ID,
       checkIn: agendamento.HOQA_CheckIn,
       checkOut: agendamento.HOQA_CheckOut,
+      confirmado: agendamento.HOQA_Confirmado,
       hotelId: agendamento.HotelQuarto.Hotel.HOTL_ID,
       hotelNome: agendamento.HotelQuarto.Hotel.HOTL_Nome,
       hotelEndereco:
@@ -71,6 +71,7 @@ export const consultarAgendamentoUsuario = async (
       hotelQuartoId: agendamento.HOQT_ID,
       hotelQuartoNumero: agendamento.HotelQuarto.HOQT_Numero,
       usuarioId: agendamento.USUA_ID,
+      usuarioNome: agendamento.Usuario?.USUA_Nome ?? "",
     })
   );
 

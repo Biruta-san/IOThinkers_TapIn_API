@@ -1,10 +1,18 @@
 import { Request, Response } from "express";
 import {
+  agendarHotel,
   atualizarHotel,
+  confirmarAgendamentoHotel,
   consultarHotel,
   inserirHotel,
   listaHotel,
+  vincularTagAgendamentoHotel,
 } from "../services/hotelService";
+import {
+  putHotelQuartoAgendamentoConfirmacao,
+  putHotelQuartoAgendamentoVinculoTag,
+  putHotelQuartoAgendar,
+} from "../models/hotelModels";
 
 /**
  * @swagger
@@ -203,6 +211,8 @@ export async function getHoteis(req: Request, res: Response) {
  *                             dataCheckOut:
  *                               type: string
  *                               format: date-time
+ *                             confirmado:
+ *                               type: boolean
  *                 HotelEnderecos:
  *                   type: array
  *                   items:
@@ -371,6 +381,8 @@ export async function getHotel(req: Request, res: Response) {
  *                           dataCheckOut:
  *                             type: string
  *                             format: date-time
+ *                           confirmado:
+ *                             type: boolean
  *               HotelEnderecos:
  *                 type: array
  *                 items:
@@ -589,6 +601,8 @@ export async function postHotel(req: Request, res: Response) {
  *                           dataCheckOut:
  *                             type: string
  *                             format: date-time
+ *                           confirmado:
+ *                             type: boolean
  *                     ExcluirHotelQuartoAgendamentos:
  *                       type: array
  *                       items:
@@ -763,5 +777,222 @@ export async function putHotel(req: Request, res: Response) {
     res.status(200).json(hotel);
   } catch (error) {
     res.status(500).json({ error: "Erro atualizando hotel" });
+  }
+}
+
+/**
+ * @swagger
+ * /hotel/agendar:
+ *   post:
+ *     summary: Agendar um quarto de hotel para um usuário
+ *     description: Este endpoint permite que um usuário agende um quarto em um hotel, especificando as datas de check-in e check-out.
+ *     tags:
+ *       - Hotel
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - hotelQuartoId
+ *               - usuarioId
+ *               - dataCheckIn
+ *               - dataCheckOut
+ *             properties:
+ *               hotelQuartoId:
+ *                 type: integer
+ *                 description: ID do hotel onde o agendamento será realizado.
+ *               usuarioId:
+ *                 type: integer
+ *                 description: ID do usuário que está realizando o agendamento.
+ *               dataCheckIn:
+ *                 type: string
+ *                 format: date
+ *                 description: Data de check-in no hotel.
+ *               dataCheckOut:
+ *                 type: string
+ *                 format: date
+ *                 description: Data de check-out do hotel.
+ *     responses:
+ *       201:
+ *         description: Agendamento realizado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID do agendamento.
+ *                 checkIn:
+ *                   type: string
+ *                   format: date
+ *                   description: Data de check-in.
+ *                 checkOut:
+ *                   type: string
+ *                   format: date
+ *                   description: Data de check-out.
+ *                 hotelQuartoId:
+ *                   type: integer
+ *                   description: ID do quarto no hotel.
+ *                 usuarioId:
+ *                   type: integer
+ *                   description: ID do usuário que fez o agendamento.
+ *                 usuarioNome:
+ *                   type: string
+ *                   description: Nome do usuário.
+ *                 confirmado:
+ *                   type: boolean
+ *                   description: Indica se o agendamento foi confirmado.
+ *       500:
+ *         description: Erro ao inserir agendamento.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Mensagem de erro.
+ */
+export async function putAgendar(req: Request, res: Response) {
+  try {
+    const data: putHotelQuartoAgendar = {
+      hotelQuartoId: parseInt(req.body.hotelQuartoId, 10),
+      usuarioId: parseInt(req.body.usuarioId, 10),
+      dataCheckIn: new Date(req.body.dataCheckIn),
+      dataCheckOut: new Date(req.body.dataCheckOut),
+    };
+
+    const agendamento = await agendarHotel(data);
+    res.status(201).json(agendamento);
+  } catch (error) {
+    res.status(500).json({ error: "Erro Inserindo agendamento" });
+  }
+}
+
+/**
+ * @swagger
+ * /hotel/confirmarAgendamento/{id}:
+ *   put:
+ *     summary: Confirma um agendamento de hotel
+ *     description: Este endpoint permite que você confirme um agendamento de hotel específico, usando o ID do agendamento e um campo booleano para confirmação.
+ *     tags:
+ *       - Hotel
+ *     security:
+ *       - bearerAuth: []  # Supondo que você use autenticação via Bearer Token
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do agendamento de hotel a ser confirmado.
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               confirmado:
+ *                 type: boolean
+ *                 description: Indica se o agendamento foi confirmado ou não.
+ *     responses:
+ *       201:
+ *         description: Agendamento confirmado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sucesso:
+ *                   type: boolean
+ *                   description: Indica se a operação de confirmação foi bem-sucedida.
+ *       400:
+ *         description: Requisição inválida (por exemplo, parâmetros ausentes ou inválidos).
+ *       500:
+ *         description: Erro interno do servidor ao tentar confirmar o agendamento.
+ *       404:
+ *         description: Agendamento não encontrado.
+ */
+export async function putConfirmarAgendamento(req: Request, res: Response) {
+  try {
+    const data: putHotelQuartoAgendamentoConfirmacao = {
+      id: parseInt(req.params.id, 10),
+      confirmado: req.body.confirmado,
+    };
+
+    const agendamento = await confirmarAgendamentoHotel(data);
+    if (agendamento) res.status(200).json({ sucesso: agendamento });
+    else res.status(500).json({ error: "Erro confirmando agendamento" });
+  } catch (error) {
+    res.status(500).json({ error: "Erro confirmando agendamento" });
+  }
+}
+
+/**
+ * @swagger
+ * /hotel/vincularTag/{id}:
+ *   put:
+ *     summary: Vincula uma tag a um agendamento de hotel
+ *     description: Este endpoint permite que você vincule uma tag a um agendamento de hotel específico, usando o ID do agendamento e o ID da tag.
+ *     tags:
+ *       - Hotel
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do agendamento de hotel.
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - tag
+ *             properties:
+ *               tag:
+ *                 type: string
+ *                 description: ID da tag a ser vinculada ao agendamento.
+ *     responses:
+ *       200:
+ *         description: Tag vinculada com sucesso ao agendamento.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sucesso:
+ *                   type: boolean
+ *                   description: Indica se a operação foi bem-sucedida.
+ *       400:
+ *         description: Requisição inválida (por exemplo, parâmetros ausentes ou inválidos).
+ *       500:
+ *         description: Erro interno do servidor ao tentar vincular a tag.
+ *       404:
+ *         description: Agendamento não encontrado ou tag não encontrada.
+ */
+export async function putVincularTagAgendamento(req: Request, res: Response) {
+  try {
+    const data: putHotelQuartoAgendamentoVinculoTag = {
+      id: parseInt(req.params.id, 10),
+      tagId: req.body.tag,
+    };
+
+    const agendamento = await vincularTagAgendamentoHotel(data);
+    if (agendamento) res.status(200).json({ sucesso: agendamento });
+    else
+      res.status(500).json({ error: "Erro ao vincular tag", tag: data.tagId });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao vincular tag" });
   }
 }

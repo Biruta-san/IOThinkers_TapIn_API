@@ -11,6 +11,11 @@ const app: Express = express();
 // Configurando ambiente
 dotenv.config();
 
+// Redirecionamento da raiz para /api-docs
+app.get("/", (req, res) => {
+  res.redirect("/api-docs");
+});
+
 app.use(express.json());
 
 // #region ROTAS

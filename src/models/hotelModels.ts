@@ -1,7 +1,7 @@
 import { Decimal } from "@prisma/client/runtime/library";
 import { dbTipoIntegracao } from "./typeModels";
 import { dbCidade } from "./localizationModels";
-import { getUsuario } from "./userModels";
+import { dbUsuario, getUsuario } from "./userModels";
 
 // #region HOTEL
 export interface dbHotel {
@@ -271,6 +271,9 @@ export interface dbHotelQuartoAgendamento {
   HOQA_CheckOut: Date;
   HOQT_ID: number;
   USUA_ID: number;
+  Usuario?: dbUsuario;
+  HOQA_Confirmado: boolean;
+  HOQA_TagId: string | null;
 }
 
 export interface getHotelQuartoAgendamento {
@@ -279,19 +282,44 @@ export interface getHotelQuartoAgendamento {
   checkOut: Date;
   hotelQuartoId: number;
   usuarioId: number;
+  usuarioNome: string;
+  confirmado: boolean;
+  tagId: string | null;
 }
 
 export interface postHotelQuartoAgendamento {
   checkIn: Date;
   checkOut: Date;
   usuarioId: number;
+  hotelQuartoId: number;
+  confirmado: boolean;
+  tagId: string | null;
 }
 
 export interface putHotelQuartoAgendamento {
   id: number;
   checkIn: Date;
   checkOut: Date;
+  usuarioId: number;
+  hotelQuartoId: number;
+  confirmado: boolean;
+  tagId: string | null;
+}
+
+export interface putHotelQuartoAgendar {
   hotelQuartoId: number;
   usuarioId: number;
+  dataCheckIn: Date;
+  dataCheckOut: Date;
+}
+
+export interface putHotelQuartoAgendamentoConfirmacao {
+  id: number;
+  confirmado: boolean;
+}
+
+export interface putHotelQuartoAgendamentoVinculoTag {
+  id: number;
+  tagId: string;
 }
 // #endregion

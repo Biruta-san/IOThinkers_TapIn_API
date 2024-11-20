@@ -5,12 +5,15 @@ import {
   inserirTipoIntegracao,
   listaTipoIntegracao,
 } from "../services/typeService";
+import { encriptar } from "../utils/crypto";
 
 /**
  * @swagger
  * tags:
  *   - name: TipoIntegracao
  *     description: Endpoints relacionados a tipos de integração
+ *   - name: Encryption
+ *     description: Endpoints relacionados a encriptação de dados
  */
 
 /**
@@ -183,5 +186,59 @@ export async function putTipoIntegracao(req: Request, res: Response) {
     res.status(200).json(tipoIntegracao);
   } catch (error) {
     res.status(500).json({ error: "Erro atualizando tipo de integração" });
+  }
+}
+
+/**
+ * @swagger
+ * /tipoIntegracao/getEncrypted:
+ *   post:
+ *     summary: Encrypts the provided data.
+ *     description: Receives data in the request body, encrypts it, and returns the encrypted data.
+ *     tags:
+ *       - Encryption
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               dados:
+ *                 type: string
+ *                 description: The data to be encrypted.
+ *                 example: "mySensitiveData"
+ *     responses:
+ *       200:
+ *         description: Successfully encrypted data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 dados:
+ *                   type: string
+ *                   description: Encrypted data.
+ *                   example: "encryptedDataString"
+ *       500:
+ *         description: Error encrypting data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message.
+ *                   example: "Erro encriptando dados"
+ */
+export async function getEncrypted(req: Request, res: Response) {
+  try {
+    const dados = encriptar(req.body.dados);
+    res.status(200).json({ dados });
+  } catch (error) {
+    res.status(500).json({ error: "Erro encriptando dados" });
   }
 }

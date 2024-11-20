@@ -9,8 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
@@ -125,13 +125,15 @@ model HotelQuartoImagem {
 }
 
 model HotelQuartoAgendamento {
-  HOQA_ID       Int         @id @default(autoincrement()) @db.Int
-  HOQA_CheckIn  DateTime
-  HOQA_CheckOut DateTime
-  HOQT_ID       Int         @db.Int
-  HotelQuarto   HotelQuarto @relation(fields: [HOQT_ID], references: [HOQT_ID])
-  USUA_ID       Int         @db.Int
-  Usuario       Usuario     @relation(fields: [USUA_ID], references: [USUA_ID])
+  HOQA_ID         Int         @id @default(autoincrement()) @db.Int
+  HOQA_CheckIn    DateTime
+  HOQA_CheckOut   DateTime
+  HOQT_ID         Int         @db.Int
+  HotelQuarto     HotelQuarto @relation(fields: [HOQT_ID], references: [HOQT_ID])
+  USUA_ID         Int         @db.Int
+  Usuario         Usuario     @relation(fields: [USUA_ID], references: [USUA_ID])
+  HOQA_Confirmado Boolean
+  HOQA_TagId      String?      @db.VarChar(255)
 }
 
 model UsuarioHotelPontuacao {

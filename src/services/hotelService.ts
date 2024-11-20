@@ -17,10 +17,12 @@ import {
   gridHotel,
   postHotel,
   postHotelQuarto,
-  postHotelQuartoAgendamento,
   postHotelQuartoImagem,
   putHotel,
   putHotelQuartoAgendamento,
+  putHotelQuartoAgendamentoConfirmacao,
+  putHotelQuartoAgendamentoVinculoTag,
+  putHotelQuartoAgendar,
   putHotelQuartoImagem,
 } from "../models/hotelModels";
 import prisma from "../prismaClient";
@@ -70,6 +72,9 @@ const mapHotelQuartoAgendamento = (
   checkOut: quartoAgendamento.HOQA_CheckOut,
   hotelQuartoId: quartoAgendamento.HOQT_ID,
   usuarioId: quartoAgendamento.USUA_ID,
+  usuarioNome: quartoAgendamento.Usuario?.USUA_Nome ?? "",
+  confirmado: quartoAgendamento.HOQA_Confirmado,
+  tagId: quartoAgendamento.HOQA_TagId,
 });
 
 const mapHotelQuartoImagem = (
@@ -182,7 +187,10 @@ export const listaHotel = async (
         },
       },
       HotelQuarto: {
-        include: { HotelQuartoAgendamentos: true, HotelQuartoImagens: true },
+        include: {
+          HotelQuartoAgendamentos: { include: { Usuario: true } },
+          HotelQuartoImagens: true,
+        },
       },
       HotelImagem: true,
     },
@@ -292,15 +300,6 @@ export const inserirHotel = async (data: postHotel): Promise<getHotel> => {
               HOQI_GUIDArquivo: uuidv4(),
               HOQI_Base64: y.base64,
             })),
-          },
-          HotelQuartoAgendamentos: {
-            create: x.HotelQuartoAgendamentos?.map(
-              (y: postHotelQuartoAgendamento) => ({
-                HOQA_CheckIn: y.checkIn ? new Date(y.checkIn) : new Date(),
-                HOQA_CheckOut: y.checkOut ? new Date(y.checkOut) : new Date(),
-                USUA_ID: y.usuarioId,
-              })
-            ),
           },
         })),
       },
@@ -435,13 +434,6 @@ export const atualizarHotel = async (
                   HOQI_Base64: y.base64,
                 })),
               },
-              HotelQuartoAgendamentos: {
-                create: x.HotelQuartoAgendamentos?.map((y) => ({
-                  HOQA_CheckIn: y.checkIn,
-                  HOQA_CheckOut: y.checkOut,
-                  USUA_ID: y.usuarioId,
-                })),
-              },
             },
           });
         } else {
@@ -474,6 +466,7 @@ export const atualizarHotel = async (
               HOQA_CheckIn: x.checkIn ? new Date(x.checkIn) : new Date(),
               HOQA_CheckOut: x.checkOut ? new Date(x.checkOut) : new Date(),
               USUA_ID: x.usuarioId,
+              HOQA_Confirmado: x.confirmado,
             },
           });
         } else {
@@ -484,6 +477,7 @@ export const atualizarHotel = async (
               HOQA_CheckIn: x.checkIn ? new Date(x.checkIn) : new Date(),
               HOQA_CheckOut: x.checkOut ? new Date(x.checkOut) : new Date(),
               USUA_ID: x.usuarioId,
+              HOQA_Confirmado: x.confirmado,
             },
           });
         }
@@ -623,4 +617,57 @@ export const atualizarHotel = async (
   const hotel: getHotel | null = await consultarHotel(id);
 
   return hotel;
+};
+
+export const agendarHotel = async (
+  data: putHotelQuartoAgendar
+): Promise<getHotelQuartoAgendamento | null> => {
+  const agendamento: dbHotelQuartoAgendamento =
+    await prisma.hotelQuartoAgendamento.create({
+      data: {
+        HOQT_ID: data.hotelQuartoId,
+        HOQA_CheckIn: data.dataCheckIn,
+        HOQA_CheckOut: data.dataCheckOut,
+        USUA_ID: data.usuarioId,
+        HOQA_Confirmado: false,
+        HOQA_TagId: null,
+      },
+      include: { Usuario: true },
+    });
+
+  if (!agendamento) return null;
+
+  const mappedAgendamento = mapHotelQuartoAgendamento(agendamento);
+
+  return mappedAgendamento;
+};
+
+export const confirmarAgendamentoHotel = async (
+  data: putHotelQuartoAgendamentoConfirmacao
+): Promise<boolean> => {
+  const agendamento: dbHotelQuartoAgendamento | null =
+    await prisma.hotelQuartoAgendamento.update({
+      where: { HOQA_ID: data.id },
+      data: {
+        HOQA_Confirmado: data.confirmado,
+      },
+    });
+
+  return agendamento ? true : false;
+};
+
+export const vincularTagAgendamentoHotel = async (
+  data: putHotelQuartoAgendamentoVinculoTag
+): Promise<boolean> => {
+  if (!data.id || data.id <= 0) return false;
+
+  const agendamento: dbHotelQuartoAgendamento | null =
+    await prisma.hotelQuartoAgendamento.update({
+      where: { HOQA_ID: data.id },
+      data: {
+        HOQA_TagId: data.tagId,
+      },
+    });
+
+  return agendamento ? true : false;
 };
