@@ -6,6 +6,7 @@ import {
   consultarHotel,
   inserirHotel,
   listaHotel,
+  listaQuartoHotel,
   vincularTagAgendamentoHotel,
 } from "../services/hotelService";
 import {
@@ -110,19 +111,94 @@ export async function getHoteis(req: Request, res: Response) {
     const numNumeroPessoas = numeroPessoas
       ? parseInt(numeroPessoas.toString())
       : 0;
-    const tipoIntegracao = await listaHotel(
+    const hotel = await listaHotel(
       strPesquisa,
       dateCheckIn,
       dateCheckOut,
       numNumeroPessoas
     );
 
-    if (!tipoIntegracao)
-      return res.status(404).json({ error: "Hotel não encontrado" });
+    if (!hotel) return res.status(404).json({ error: "Hotel não encontrado" });
 
-    res.status(200).json(tipoIntegracao);
+    res.status(200).json(hotel);
   } catch (error) {
-    res.status(500).json({ error: "Erro consultando tipo de integração" });
+    res.status(500).json({ error: "Erro consultando Hotel" });
+  }
+}
+
+/**
+ * @swagger
+ * /hotel/quartos/{id}:
+ *   get:
+ *     summary: Retorna a lista de quartos de um hotel pelo ID
+ *     tags:
+ *       - Hotel
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do hotel para buscar os quartos
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista de quartos do hotel
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: ID do quarto
+ *                   numero:
+ *                     type: integer
+ *                     description: Número do quarto
+ *                   valorDiaria:
+ *                     type: number
+ *                     format: decimal
+ *                     description: Valor da diária do quarto
+ *                   capacidadePessoa:
+ *                     type: integer
+ *                     description: Capacidade máxima de pessoas no quarto
+ *       404:
+ *         description: Hotel ou quartos não encontrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Hotel ou quartos não encontrados
+ *       500:
+ *         description: Erro consultando o hotel ou os quartos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Erro consultando Hotel
+ */
+export async function getHotelQuartos(req: Request, res: Response) {
+  try {
+    const hotelId = parseInt(req.params.id, 10);
+    const hotelQuarto = await listaQuartoHotel(hotelId);
+
+    if (!hotelQuarto)
+      return res
+        .status(404)
+        .json({ error: "Hotel ou quartos não encontrados" });
+
+    res.status(200).json(hotelQuarto);
+  } catch (error) {
+    res.status(500).json({ error: "Erro consultando Hotel" });
   }
 }
 

@@ -14,6 +14,7 @@ import {
   getHotelQuarto,
   getHotelQuartoAgendamento,
   getHotelQuartoImagem,
+  getListHotelQuarto,
   gridHotel,
   postHotel,
   postHotelQuarto,
@@ -252,6 +253,30 @@ export const listaHotel = async (
   );
 
   return mappedTipoIntegracoes;
+};
+
+export const listaQuartoHotel = async (
+  hotelId: number
+): Promise<getListHotelQuarto[] | null> => {
+  const hotel = await prisma.hotel.findFirst({
+    where: { HOTL_ID: hotelId },
+    include: { HotelQuarto: true },
+  });
+
+  if (!hotel) return null;
+
+  const mapQuartos: getListHotelQuarto[] = hotel.HotelQuarto?.filter(
+    (x) => x.HOQT_Ativo
+  )?.map((quarto) => ({
+    id: quarto.HOQT_ID,
+    numero: quarto.HOQT_Numero,
+    valorDiaria: quarto.HOQT_ValorDiaria,
+    capacidadePessoa: quarto.HOQT_CapacidadePessoa,
+  }));
+
+  if (!mapQuartos || mapQuartos?.length === 0) return null;
+
+  return mapQuartos;
 };
 
 export const consultarHotel = async (id: number): Promise<getHotel | null> => {

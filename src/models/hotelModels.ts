@@ -209,6 +209,13 @@ export interface getHotelQuarto {
   HotelQuartoAgendamentos: getHotelQuartoAgendamento[] | null;
 }
 
+export interface getListHotelQuarto {
+  id: number;
+  numero: number;
+  valorDiaria: Decimal;
+  capacidadePessoa: number;
+}
+
 export interface postHotelQuarto {
   numero: number;
   valorDiaria: Decimal;

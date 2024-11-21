@@ -3,6 +3,7 @@ import { authenticateToken } from "../middleware";
 import {
   getHoteis,
   getHotel,
+  getHotelQuartos,
   postHotel,
   putAgendar,
   putConfirmarAgendamento,
@@ -15,8 +16,11 @@ const hotelRoutes = Router();
 
 // #region  ROTAS
 
-// Rota para get de todos os tipos de integração
+// Rota para get de todos os hoteis
 hotelRoutes.get("/lista", authenticateToken, getHoteis);
+
+// Rota para get de todos os quartos do hotel
+hotelRoutes.get("/quartos/:id", authenticateToken, getHotelQuartos);
 
 // Rota para get de hotel por id
 hotelRoutes.get("/:id", authenticateToken, getHotel);
