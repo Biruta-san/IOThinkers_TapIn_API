@@ -4,8 +4,8 @@ import {
   getHoteis,
   getHotel,
   getHotelQuartos,
+  postAgendar,
   postHotel,
-  putAgendar,
   putConfirmarAgendamento,
   putHotel,
   putVincularTagAgendamento,
@@ -29,7 +29,7 @@ hotelRoutes.get("/:id", authenticateToken, getHotel);
 hotelRoutes.post("/", authenticateToken, postHotel);
 
 // Rota para put de agendamento
-hotelRoutes.post("/agendar", authenticateToken, putAgendar);
+hotelRoutes.post("/agendar", authenticateToken, postAgendar);
 
 // Rota para put de hotel
 hotelRoutes.put("/:id", authenticateToken, putHotel);

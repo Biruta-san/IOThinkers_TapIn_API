@@ -934,7 +934,7 @@ export async function putHotel(req: Request, res: Response) {
  *                   type: string
  *                   description: Mensagem de erro.
  */
-export async function putAgendar(req: Request, res: Response) {
+export async function postAgendar(req: Request, res: Response) {
   try {
     const data: putHotelQuartoAgendar = {
       hotelQuartoId: parseInt(req.body.hotelQuartoId, 10),
