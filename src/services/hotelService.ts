@@ -159,9 +159,10 @@ const mapHotelGrid = (hotel: dbHotel): gridHotel => {
     numero = hotel.HotelEnderecos[0].HOEN_Numero ?? 0;
   }
 
-  const mappedImagens: getHotelImagem[] | null = hotel.HotelImagem
-    ? hotel.HotelImagem?.map((imagem) => mapHotelImagem(imagem))
-    : null;
+  const mappedImagens: (string | null)[] =
+    hotel.HotelImagem && hotel.HotelImagem?.length > 0
+      ? hotel.HotelImagem.map((imagem) => imagem.HOIM_Base64).filter((base64) => base64 !== undefined)
+      : [];
 
   return {
     id: hotel.HOTL_ID,

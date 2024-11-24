@@ -7,6 +7,7 @@ import {
   listaUsuario,
   logUser,
 } from "../services/userService";
+import { getUsuarioAgendamento } from "../models/userModels";
 
 /**
  * @swagger
@@ -106,18 +107,6 @@ export async function getUsuario(req: Request, res: Response) {
   } catch (error) {
     res.status(500).json({ error: "Erro ao consultar usuário" });
   }
-}
-
-export interface getUsuarioAgendamento {
-  id: number;
-  checkIn: Date;
-  checkOut: Date;
-  hotelId: number;
-  hotelNome: string;
-  hotelEndereco: string;
-  hotelQuartoId: number;
-  hotelQuartoNumero: number;
-  usuarioId: number;
 }
 
 /**

@@ -36,7 +36,7 @@ export interface gridHotel {
   cidade: string;
   endereco: string;
   numero: number;
-  imagens: getHotelImagem[] | null;
+  imagens: (string | null)[];
 }
 
 export interface postHotel {
