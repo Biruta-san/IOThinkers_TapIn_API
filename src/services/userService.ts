@@ -82,6 +82,44 @@ export const consultarAgendamentoUsuario = async (
   return mappedAgendamentos;
 };
 
+export const consultarAgendamentoId = async (
+  id: number
+): Promise<getUsuarioAgendamento | null> => {
+  const agendamento = await prisma.hotelQuartoAgendamento.findFirst({
+    where: { HOQA_ID: id },
+    include: {
+      Usuario: true,
+      HotelQuarto: {
+        include: {
+          Hotel: { include: { HotelEnderecos: true, HotelImagem: true } },
+        },
+      },
+    },
+  });
+
+  if (!agendamento) return null;
+
+  const mappedAgendamentos: getUsuarioAgendamento = {
+    id: agendamento.HOQA_ID,
+    checkIn: agendamento.HOQA_CheckIn,
+    checkOut: agendamento.HOQA_CheckOut,
+    confirmado: agendamento.HOQA_Confirmado,
+    hotelId: agendamento.HotelQuarto.Hotel.HOTL_ID,
+    hotelNome: agendamento.HotelQuarto.Hotel.HOTL_Nome,
+    hotelEndereco:
+      agendamento.HotelQuarto?.Hotel?.HotelEnderecos[0]?.HOEN_Endereco ?? "",
+    hotelQuartoId: agendamento.HOQT_ID,
+    hotelQuartoNumero: agendamento.HotelQuarto.HOQT_Numero,
+    usuarioId: agendamento.USUA_ID,
+    usuarioNome: agendamento.Usuario?.USUA_Nome ?? "",
+    hotelImagens: agendamento.HotelQuarto?.Hotel?.HotelImagem?.map(
+      (x) => x.HOIM_Base64
+    ),
+  };
+
+  return mappedAgendamentos;
+};
+
 export const inserirUsuario = async (
   data: postUsuario
 ): Promise<getUsuario> => {

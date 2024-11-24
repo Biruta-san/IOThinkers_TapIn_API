@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   atualizarUsuario,
+  consultarAgendamentoId,
   consultarAgendamentoUsuario,
   consultarUsuario,
   inserirUsuario,
@@ -206,6 +207,106 @@ export async function getUsuarioAgendamento(req: Request, res: Response) {
     if (!usuarioAgendamentos || usuarioAgendamentos.length === 0)
       return res.status(404).json({ error: "Usuário não encontrado" });
     res.status(200).json(usuarioAgendamentos);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao consultar usuário" });
+  }
+}
+
+/**
+ * @swagger
+ * /usuario/agendamento/{id}:
+ *   get:
+ *     summary: Agendamento de usuário
+ *     description: Retorna o agendamento por ud
+ *     tags:
+ *       - Usuário
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID do agendamento
+ *     responses:
+ *       200:
+ *         description: Sucesso ao consultar agendamento
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 123
+ *                 checkIn:
+ *                   type: string
+ *                   format: date
+ *                   example: "2023-08-10"
+ *                 checkOut:
+ *                   type: string
+ *                   format: date
+ *                   example: "2023-08-15"
+ *                 confirmado:
+ *                   type: boolean
+ *                   example: true
+ *                 hotelId:
+ *                   type: integer
+ *                   example: 789
+ *                 hotelNome:
+ *                   type: string
+ *                   example: "Hotel Example"
+ *                 hotelEndereco:
+ *                   type: string
+ *                   example: "123 Rua Principal"
+ *                 hotelQuartoId:
+ *                   type: integer
+ *                   example: 456
+ *                 hotelQuartoNumero:
+ *                   type: integer
+ *                   example: 101
+ *                 usuarioId:
+ *                   type: integer
+ *                   example: 1
+ *                 usuarioNome:
+ *                   type: string
+ *                   example: "John Doe"
+ *                 hotelImagens:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     nullable: true
+ *                   example: ["imagem1.jpg", "imagem2.jpg", null]
+ *       404:
+ *         description: Agendamento não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Agendamento não encontrado"
+ *       500:
+ *         description: Erro ao consultar agendamento
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erro ao consultar usuário"
+ */
+export async function getAgendamento(req: Request, res: Response) {
+  try {
+    const agendamento: getUsuarioAgendamento | null =
+      await consultarAgendamentoId(parseInt(req.params.id, 10));
+    if (!agendamento)
+      return res.status(404).json({ error: "Agendamento não encontrado" });
+    res.status(200).json(agendamento);
   } catch (error) {
     res.status(500).json({ error: "Erro ao consultar usuário" });
   }

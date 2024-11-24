@@ -105,12 +105,12 @@ import {
 export async function getHoteis(req: Request, res: Response) {
   try {
     const { pesquisa, checkIn, checkOut, numeroPessoas } = req.query;
-    const strPesquisa = typeof pesquisa === "string" ? pesquisa : "";
+    const strPesquisa = typeof pesquisa === "string" ? pesquisa : null;
     const dateCheckIn = checkIn ? new Date(checkIn.toString()) : null;
     const dateCheckOut = checkOut ? new Date(checkOut.toString()) : null;
     const numNumeroPessoas = numeroPessoas
       ? parseInt(numeroPessoas.toString())
-      : 0;
+      : null;
     const hotel = await listaHotel(
       strPesquisa,
       dateCheckIn,
