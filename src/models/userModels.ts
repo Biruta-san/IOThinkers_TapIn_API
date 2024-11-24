@@ -32,6 +32,7 @@ export interface getUsuarioAgendamento {
   hotelQuartoNumero: number;
   usuarioId: number;
   usuarioNome: string;
+  hotelImagens?: (string | null)[];
 }
 
 export interface postUsuario {

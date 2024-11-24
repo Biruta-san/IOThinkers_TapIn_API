@@ -159,6 +159,9 @@ export interface getUsuarioAgendamento {
  *                     type: string
  *                     format: date
  *                     example: "2023-08-15"
+ *                   confirmado:
+ *                     type: boolean
+ *                     example: true
  *                   hotelId:
  *                     type: integer
  *                     example: 789
@@ -177,6 +180,15 @@ export interface getUsuarioAgendamento {
  *                   usuarioId:
  *                     type: integer
  *                     example: 1
+ *                   usuarioNome:
+ *                     type: string
+ *                     example: "John Doe"
+ *                   hotelImagens:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                       nullable: true
+ *                     example: ["imagem1.jpg", "imagem2.jpg", null]
  *       404:
  *         description: Usuário não encontrado
  *         content:
@@ -200,12 +212,11 @@ export interface getUsuarioAgendamento {
  */
 export async function getUsuarioAgendamento(req: Request, res: Response) {
   try {
-    const usuarioAgendamentos = await consultarAgendamentoUsuario(
-      parseInt(req.params.id, 10)
-    );
-    if (!usuarioAgendamentos)
+    const usuarioAgendamentos: getUsuarioAgendamento[] | null =
+      await consultarAgendamentoUsuario(parseInt(req.params.id, 10));
+    if (!usuarioAgendamentos || usuarioAgendamentos.length === 0)
       return res.status(404).json({ error: "Usuário não encontrado" });
-    res.json(usuarioAgendamentos);
+    res.status(200).json(usuarioAgendamentos);
   } catch (error) {
     res.status(500).json({ error: "Erro ao consultar usuário" });
   }

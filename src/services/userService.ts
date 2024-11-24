@@ -1,4 +1,3 @@
-import { getHotelQuartoAgendamento } from "../models/hotelModels";
 import {
   dbUsuario,
   getUsuario,
@@ -51,7 +50,9 @@ export const consultarAgendamentoUsuario = async (
     include: {
       Usuario: true,
       HotelQuarto: {
-        include: { Hotel: { include: { HotelEnderecos: true } } },
+        include: {
+          Hotel: { include: { HotelEnderecos: true, HotelImagem: true } },
+        },
       },
     },
   });
@@ -72,6 +73,9 @@ export const consultarAgendamentoUsuario = async (
       hotelQuartoNumero: agendamento.HotelQuarto.HOQT_Numero,
       usuarioId: agendamento.USUA_ID,
       usuarioNome: agendamento.Usuario?.USUA_Nome ?? "",
+      hotelImagens: agendamento.HotelQuarto?.Hotel?.HotelImagem?.map(
+        (x) => x.HOIM_Base64
+      ),
     })
   );
 
