@@ -193,8 +193,8 @@ export async function putTipoIntegracao(req: Request, res: Response) {
  * @swagger
  * /tipoIntegracao/getEncrypted:
  *   post:
- *     summary: Encrypts the provided data.
- *     description: Receives data in the request body, encrypts it, and returns the encrypted data.
+ *     summary: Encripta dados
+ *     description: Recebe dados no corpo da requisição e os retorna criptografados
  *     tags:
  *       - Encryption
  *     security:

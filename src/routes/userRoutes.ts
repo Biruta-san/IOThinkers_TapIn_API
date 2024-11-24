@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getData,
   getListaUsuario,
   getUsuario,
   getUsuarioAgendamento,
@@ -31,6 +32,9 @@ userRoutes.put("/:id", authenticateToken, putUsuario);
 
 // Realiza login
 userRoutes.post("/login", login);
+
+// Realiza login
+userRoutes.post("/data", getData);
 
 // #endregion
 

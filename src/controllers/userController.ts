@@ -269,6 +269,36 @@ export async function login(req: Request, res: Response) {
 
 /**
  * @swagger
+ * /usuario/data:
+ *   post:
+ *     summary: Realiza login na aplicação
+ *     tags:
+ *       - Usuário
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Um Usuário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       404:
+ *         description: Usuário não encontrado
+ *       500:
+ *         description: Erro ao realizar login
+ */
+export async function getData(req: Request, res: Response) {
+  try {
+    res.json({ data: new Date() });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao realizar login" });
+  }
+}
+/**
+ * @swagger
  * /usuario:
  *   post:
  *     summary: Insere um usuário e retorna o usuário inserido
