@@ -56,6 +56,7 @@ export interface loginUsuario {
 
 export interface loginUsuarioResponse {
   token: string;
+  usuario: getUsuario;
 }
 // #endregion
 

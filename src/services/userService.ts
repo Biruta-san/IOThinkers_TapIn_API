@@ -141,7 +141,10 @@ export const logUser = async (
 
   if (!tokenValidated) return null;
 
-  const userLogged: loginUsuarioResponse = { token: tokenValidated };
+  const userLogged: loginUsuarioResponse = {
+    token: tokenValidated,
+    usuario: mapUsuario(user),
+  };
 
   return userLogged;
 };

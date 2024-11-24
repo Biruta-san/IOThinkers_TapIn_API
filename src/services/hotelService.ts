@@ -672,7 +672,7 @@ export const confirmarAgendamentoHotel = async (
 ): Promise<boolean> => {
   const agendamento: dbHotelQuartoAgendamento | null =
     await prisma.hotelQuartoAgendamento.update({
-      where: { HOQA_ID: data.id },
+      where: { HOQA_ID: data.id, HOQA_TagId: data.tagId },
       data: {
         HOQA_Confirmado: data.confirmado,
       },

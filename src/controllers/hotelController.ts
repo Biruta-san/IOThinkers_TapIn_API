@@ -955,7 +955,7 @@ export async function postAgendar(req: Request, res: Response) {
  * /hotel/confirmarAgendamento/{id}:
  *   put:
  *     summary: Confirma um agendamento de hotel
- *     description: Este endpoint permite que você confirme um agendamento de hotel específico, usando o ID do agendamento e um campo booleano para confirmação.
+ *     description: Este endpoint permite que você confirme um agendamento de hotel específico, usando o ID do agendamento e campos adicionais no corpo da requisição.
  *     tags:
  *       - Hotel
  *     security:
@@ -977,8 +977,11 @@ export async function postAgendar(req: Request, res: Response) {
  *               confirmado:
  *                 type: boolean
  *                 description: Indica se o agendamento foi confirmado ou não.
+ *               tagId:
+ *                 type: string
+ *                 description: ID de uma tag associada ao agendamento.
  *     responses:
- *       201:
+ *       200:
  *         description: Agendamento confirmado com sucesso.
  *         content:
  *           application/json:
@@ -1000,11 +1003,15 @@ export async function putConfirmarAgendamento(req: Request, res: Response) {
     const data: putHotelQuartoAgendamentoConfirmacao = {
       id: parseInt(req.params.id, 10),
       confirmado: req.body.confirmado,
+      tagId: req.body.tagId, // Added the tagId parameter
     };
 
     const agendamento = await confirmarAgendamentoHotel(data);
-    if (agendamento) res.status(200).json({ sucesso: agendamento });
-    else res.status(500).json({ error: "Erro confirmando agendamento" });
+    if (agendamento) {
+      res.status(200).json({ sucesso: agendamento });
+    } else {
+      res.status(500).json({ error: "Erro confirmando agendamento" });
+    }
   } catch (error) {
     res.status(500).json({ error: "Erro confirmando agendamento" });
   }

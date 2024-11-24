@@ -323,6 +323,7 @@ export interface putHotelQuartoAgendar {
 export interface putHotelQuartoAgendamentoConfirmacao {
   id: number;
   confirmado: boolean;
+  tagId: string;
 }
 
 export interface putHotelQuartoAgendamentoVinculoTag {
