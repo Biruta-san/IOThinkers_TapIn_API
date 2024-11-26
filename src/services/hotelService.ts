@@ -74,7 +74,8 @@ const mapHotelQuartoAgendamento = (
   hotelQuartoId: quartoAgendamento.HOQT_ID,
   usuarioId: quartoAgendamento.USUA_ID,
   usuarioNome: quartoAgendamento.Usuario?.USUA_Nome ?? "",
-  confirmado: quartoAgendamento.HOQA_Confirmado,
+  checkInConfirmado: quartoAgendamento.HOQA_CheckIn_Confirmado,
+  checkOutConfirmado: quartoAgendamento.HOQA_CheckOut_Confirmado,
   tagId: quartoAgendamento.HOQA_TagId,
 });
 
@@ -161,7 +162,9 @@ const mapHotelGrid = (hotel: dbHotel): gridHotel => {
 
   const mappedImagens: (string | null)[] =
     hotel.HotelImagem && hotel.HotelImagem?.length > 0
-      ? hotel.HotelImagem.map((imagem) => imagem.HOIM_Base64).filter((base64) => base64 !== undefined)
+      ? hotel.HotelImagem.map((imagem) => imagem.HOIM_Base64).filter(
+          (base64) => base64 !== undefined
+        )
       : [];
 
   return {
@@ -492,7 +495,8 @@ export const atualizarHotel = async (
               HOQA_CheckIn: x.checkIn ? new Date(x.checkIn) : new Date(),
               HOQA_CheckOut: x.checkOut ? new Date(x.checkOut) : new Date(),
               USUA_ID: x.usuarioId,
-              HOQA_Confirmado: x.confirmado,
+              HOQA_CheckIn_Confirmado: x.checkInConfirmado,
+              HOQA_CheckOut_Confirmado: x.checkOutConfirmado,
             },
           });
         } else {
@@ -503,7 +507,8 @@ export const atualizarHotel = async (
               HOQA_CheckIn: x.checkIn ? new Date(x.checkIn) : new Date(),
               HOQA_CheckOut: x.checkOut ? new Date(x.checkOut) : new Date(),
               USUA_ID: x.usuarioId,
-              HOQA_Confirmado: x.confirmado,
+              HOQA_CheckIn_Confirmado: x.checkInConfirmado,
+              HOQA_CheckOut_Confirmado: x.checkOutConfirmado,
             },
           });
         }
@@ -655,7 +660,8 @@ export const agendarHotel = async (
         HOQA_CheckIn: data.dataCheckIn,
         HOQA_CheckOut: data.dataCheckOut,
         USUA_ID: data.usuarioId,
-        HOQA_Confirmado: false,
+        HOQA_CheckIn_Confirmado: false,
+        HOQA_CheckOut_Confirmado: false,
         HOQA_TagId: null,
       },
       include: { Usuario: true },
@@ -675,7 +681,8 @@ export const confirmarAgendamentoHotel = async (
     await prisma.hotelQuartoAgendamento.update({
       where: { HOQA_ID: data.id, HOQA_TagId: data.tagId },
       data: {
-        HOQA_Confirmado: data.confirmado,
+        HOQA_CheckIn_Confirmado: data.checkInConfirmado,
+        HOQA_CheckOut_Confirmado: data.checkOutConfirmado,
       },
     });
 

@@ -64,7 +64,8 @@ export const consultarAgendamentoUsuario = async (
       id: agendamento.HOQA_ID,
       checkIn: agendamento.HOQA_CheckIn,
       checkOut: agendamento.HOQA_CheckOut,
-      confirmado: agendamento.HOQA_Confirmado,
+      checkInConfirmado: agendamento.HOQA_CheckIn_Confirmado,
+      checkOutConfirmado: agendamento.HOQA_CheckOut_Confirmado,
       hotelId: agendamento.HotelQuarto.Hotel.HOTL_ID,
       hotelNome: agendamento.HotelQuarto.Hotel.HOTL_Nome,
       hotelEndereco:
@@ -103,7 +104,8 @@ export const consultarAgendamentoId = async (
     id: agendamento.HOQA_ID,
     checkIn: agendamento.HOQA_CheckIn,
     checkOut: agendamento.HOQA_CheckOut,
-    confirmado: agendamento.HOQA_Confirmado,
+    checkInConfirmado: agendamento.HOQA_CheckIn_Confirmado,
+    checkOutConfirmado: agendamento.HOQA_CheckOut_Confirmado,
     hotelId: agendamento.HotelQuarto.Hotel.HOTL_ID,
     hotelNome: agendamento.HotelQuarto.Hotel.HOTL_Nome,
     hotelEndereco:

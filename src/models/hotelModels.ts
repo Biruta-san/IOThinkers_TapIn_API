@@ -279,7 +279,8 @@ export interface dbHotelQuartoAgendamento {
   HOQT_ID: number;
   USUA_ID: number;
   Usuario?: dbUsuario;
-  HOQA_Confirmado: boolean;
+  HOQA_CheckIn_Confirmado: boolean;
+  HOQA_CheckOut_Confirmado: boolean;
   HOQA_TagId: string | null;
 }
 
@@ -290,7 +291,8 @@ export interface getHotelQuartoAgendamento {
   hotelQuartoId: number;
   usuarioId: number;
   usuarioNome: string;
-  confirmado: boolean;
+  checkInConfirmado: boolean;
+  checkOutConfirmado: boolean;
   tagId: string | null;
 }
 
@@ -299,7 +301,8 @@ export interface postHotelQuartoAgendamento {
   checkOut: Date;
   usuarioId: number;
   hotelQuartoId: number;
-  confirmado: boolean;
+  checkInConfirmado: boolean;
+  checkOutConfirmado: boolean;
   tagId: string | null;
 }
 
@@ -309,7 +312,8 @@ export interface putHotelQuartoAgendamento {
   checkOut: Date;
   usuarioId: number;
   hotelQuartoId: number;
-  confirmado: boolean;
+  checkInConfirmado: boolean;
+  checkOutConfirmado: boolean;
   tagId: string | null;
 }
 
@@ -322,7 +326,8 @@ export interface putHotelQuartoAgendar {
 
 export interface putHotelQuartoAgendamentoConfirmacao {
   id: number;
-  confirmado: boolean;
+  checkInConfirmado: boolean;
+  checkOutConfirmado: boolean;
   tagId: string;
 }
 

@@ -974,9 +974,12 @@ export async function postAgendar(req: Request, res: Response) {
  *           schema:
  *             type: object
  *             properties:
- *               confirmado:
+ *               checkInConfirmado:
  *                 type: boolean
- *                 description: Indica se o agendamento foi confirmado ou não.
+ *                 description: Indica se o checkIn foi confirmado ou não.
+ *               checkOutConfirmado:
+ *                 type: boolean
+ *                 description: Indica se o checkOut foi confirmado ou não.
  *               tagId:
  *                 type: string
  *                 description: ID de uma tag associada ao agendamento.
@@ -1002,8 +1005,9 @@ export async function putConfirmarAgendamento(req: Request, res: Response) {
   try {
     const data: putHotelQuartoAgendamentoConfirmacao = {
       id: parseInt(req.params.id, 10),
-      confirmado: req.body.confirmado,
-      tagId: req.body.tagId, // Added the tagId parameter
+      checkInConfirmado: req.body.checkInConfirmado,
+      checkOutConfirmado: req.body.checkOutConfirmado,
+      tagId: req.body.tagId,
     };
 
     const agendamento = await confirmarAgendamentoHotel(data);

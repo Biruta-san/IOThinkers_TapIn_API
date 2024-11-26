@@ -149,7 +149,10 @@ export async function getUsuario(req: Request, res: Response) {
  *                     type: string
  *                     format: date
  *                     example: "2023-08-15"
- *                   confirmado:
+ *                   checkInConfirmado:
+ *                     type: boolean
+ *                     example: true
+ *                   checkOutConfirmado:
  *                     type: boolean
  *                     example: true
  *                   hotelId:
@@ -249,7 +252,10 @@ export async function getUsuarioAgendamento(req: Request, res: Response) {
  *                   type: string
  *                   format: date
  *                   example: "2023-08-15"
- *                 confirmado:
+ *                 checkInConfirmado:
+ *                   type: boolean
+ *                   example: true
+ *                 checkOutConfirmado:
  *                   type: boolean
  *                   example: true
  *                 hotelId:
