@@ -45,9 +45,7 @@ const mapHotelIntegracaoArquivo = (
 const mapHotelImagem = (hotelImagem: dbHotelImagem): getHotelImagem => ({
   id: hotelImagem.HOIM_ID,
   hotelId: hotelImagem.HOTL_ID,
-  nomeArquivo: hotelImagem.HOIM_NomeArquivo,
-  guidArquivo: hotelImagem.HOIM_GUIDArquivo,
-  base64: hotelImagem.HOIM_Base64,
+  link: hotelImagem.HOIM_Link,
 });
 
 const mapEndereco = (endereco: dbHotelEndereco): getHotelEndereco => ({
@@ -162,7 +160,7 @@ const mapHotelGrid = (hotel: dbHotel): gridHotel => {
 
   const mappedImagens: (string | null)[] =
     hotel.HotelImagem && hotel.HotelImagem?.length > 0
-      ? hotel.HotelImagem.map((imagem) => imagem.HOIM_Base64).filter(
+      ? hotel.HotelImagem.map((imagem) => imagem.HOIM_Link).filter(
           (base64) => base64 !== undefined
         )
       : [];
@@ -343,9 +341,7 @@ export const inserirHotel = async (data: postHotel): Promise<getHotel> => {
       },
       HotelImagem: {
         create: data.HotelImagem?.map((x) => ({
-          HOIM_NomeArquivo: x.nomeArquivo,
-          HOIM_GUIDArquivo: uuidv4(),
-          HOIM_Base64: x.base64,
+          HOIM_Link: x.link,
         })),
       },
       HotelIntegracaoArquivo: {
@@ -424,9 +420,7 @@ export const atualizarHotel = async (
           await prisma.hotelImagem.create({
             data: {
               HOTL_ID: id,
-              HOIM_NomeArquivo: x.nomeArquivo,
-              HOIM_GUIDArquivo: uuidv4(),
-              HOIM_Base64: x.base64,
+              HOIM_Link: x.link,
             },
           });
         } else {
@@ -434,9 +428,7 @@ export const atualizarHotel = async (
             where: { HOIM_ID: x.id },
             data: {
               HOTL_ID: id,
-              HOIM_NomeArquivo: x.nomeArquivo,
-              HOIM_GUIDArquivo: x.guidArquivo,
-              HOIM_Base64: x.base64,
+              HOIM_Link: x.link,
             },
           });
         }

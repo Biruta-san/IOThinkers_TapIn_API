@@ -75,7 +75,7 @@ export const consultarAgendamentoUsuario = async (
       usuarioId: agendamento.USUA_ID,
       usuarioNome: agendamento.Usuario?.USUA_Nome ?? "",
       hotelImagens: agendamento.HotelQuarto?.Hotel?.HotelImagem?.map(
-        (x) => x.HOIM_Base64
+        (x) => x.HOIM_Link
       ),
     })
   );
@@ -115,7 +115,7 @@ export const consultarAgendamentoId = async (
     usuarioId: agendamento.USUA_ID,
     usuarioNome: agendamento.Usuario?.USUA_Nome ?? "",
     hotelImagens: agendamento.HotelQuarto?.Hotel?.HotelImagem?.map(
-      (x) => x.HOIM_Base64
+      (x) => x.HOIM_Link
     ),
   };
 

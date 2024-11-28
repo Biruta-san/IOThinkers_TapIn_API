@@ -90,13 +90,8 @@ import {
  *                           type: integer
  *                         hotelId:
  *                           type: integer
- *                         nomeArquivo:
+ *                         link:
  *                           type: string
- *                         guidArquivo:
- *                           type: string
- *                         base64:
- *                           type: string
- *                           nullable: true
  *       404:
  *        description: Hotel não encontrado
  *       500:
@@ -327,13 +322,8 @@ export async function getHotelQuartos(req: Request, res: Response) {
  *                         type: integer
  *                       hotelId:
  *                         type: integer
- *                       nomeArquivo:
+ *                       link:
  *                         type: string
- *                       guidArquivo:
- *                         type: string
- *                       base64:
- *                         type: string
- *                         nullable: true
  *                 HotelIntegracaoArquivo:
  *                   type: array
  *                   items:
@@ -479,13 +469,8 @@ export async function getHotel(req: Request, res: Response) {
  *                 items:
  *                   type: object
  *                   properties:
- *                     nomeArquivo:
+ *                     link:
  *                       type: string
- *                     guidArquivo:
- *                       type: string
- *                     base64:
- *                       type: string
- *                       nullable: true
  *               HotelIntegracaoArquivo:
  *                 type: array
  *                 items:
@@ -560,9 +545,7 @@ export async function getHotel(req: Request, res: Response) {
  *                     properties:
  *                       id:
  *                         type: integer
- *                       nomeArquivo:
- *                         type: string
- *                       guidArquivo:
+ *                       link:
  *                         type: string
  *                 HotelIntegracaoArquivo:
  *                   type: array
@@ -715,13 +698,8 @@ export async function postHotel(req: Request, res: Response) {
  *                   properties:
  *                     id:
  *                       type: integer
- *                     nomeArquivo:
+ *                     link:
  *                       type: string
- *                     guidArquivo:
- *                       type: string
- *                       base64:
- *                         type: string
- *                         nullable: true
  *               ExcluirHotelImagem:
  *                 type: array
  *                 items:
@@ -816,13 +794,8 @@ export async function postHotel(req: Request, res: Response) {
  *                     properties:
  *                       id:
  *                         type: integer
- *                       nomeArquivo:
+ *                       link:
  *                         type: string
- *                       guidArquivo:
- *                         type: string
- *                       base64:
- *                         type: string
- *                         nullable: true
  *                 HotelIntegracaoArquivo:
  *                   type: array
  *                   items:

@@ -83,12 +83,10 @@ model HotelIntegracaoArquivo {
 }
 
 model HotelImagem {
-  HOIM_ID          Int     @id @default(autoincrement()) @db.Int
-  HOTL_ID          Int     @db.Int
-  Hotel            Hotel   @relation(fields: [HOTL_ID], references: [HOTL_ID])
-  HOIM_NomeArquivo String  @db.VarChar(125)
-  HOIM_GUIDArquivo String  @db.VarChar(255)
-  HOIM_Base64      String? @db.LongText
+  HOIM_ID   Int    @id @default(autoincrement()) @db.Int
+  HOTL_ID   Int    @db.Int
+  Hotel     Hotel  @relation(fields: [HOTL_ID], references: [HOTL_ID])
+  HOIM_Link String @db.LongText
 }
 
 model HotelEndereco {

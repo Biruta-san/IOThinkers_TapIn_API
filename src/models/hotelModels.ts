@@ -112,31 +112,23 @@ export interface putHotelIntegracaoArquivo {
 export interface dbHotelImagem {
   HOIM_ID: number;
   HOTL_ID: number;
-  HOIM_NomeArquivo: string;
-  HOIM_GUIDArquivo: string;
-  HOIM_Base64?: string | null;
+  HOIM_Link: string;
 }
 
 export interface getHotelImagem {
   id: number;
   hotelId: number;
-  nomeArquivo: string;
-  guidArquivo: string;
-  base64?: string | null;
+  link: string;
 }
 
 export interface postHotelImagem {
-  nomeArquivo: string;
-  guidArquivo: string;
-  base64?: string | null;
+  link: string;
 }
 
 export interface putHotelImagem {
   id: number;
   hotelId: number;
-  nomeArquivo: string;
-  guidArquivo: string;
-  base64?: string | null;
+  link: string;
 }
 // #endregion
 
